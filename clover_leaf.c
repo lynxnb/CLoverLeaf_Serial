@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2022 Niccolò Betto
+
 #include "clover.h"
 #include "data.h"
 #include "hydro.h"

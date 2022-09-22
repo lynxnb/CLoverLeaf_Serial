@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (C) 2022 Niccolò Betto
+
 #pragma once
 
 #define max(a,b)             \

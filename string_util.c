@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (C) 2022 Niccolò Betto
+
 #include <ctype.h>
 #include <string.h>
 

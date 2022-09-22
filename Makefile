@@ -1,44 +1,24 @@
-#Crown Copyright 2012 AWE.
-#
-# This file is part of CloverLeaf.
-#
-# CloverLeaf is free software: you can redistribute it and/or modify it under 
-# the terms of the GNU General Public License as published by the 
-# Free Software Foundation, either version 3 of the License, or (at your option) 
-# any later version.
-#
-# CloverLeaf is distributed in the hope that it will be useful, but 
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
-# details.
-#
-# You should have received a copy of the GNU General Public License along with 
-# CloverLeaf. If not, see http://www.gnu.org/licenses/.
-#
-# @brief Makefile for CloverLeaf
-# @author Wayne Gaudin, Andy Herdman, Niccolò Betto
-# @details Agnostic, platform independent makefile for the Clover Leaf benchmark code.
-#
-# It is not meant to be smart as to only recompile what's necessary.
-#
-# There is no single way of turning OpenMP compilation on with all compilers.
-# The major compilers have been added as a variable. By default make will use gcc.
-# To select a OpenMP compiler option, do this in the shell before typing make:-
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2022 Niccolò Betto
+
+# @brief Makefile for CloverLeaf Cereal
+# @author Niccolò Betto
+
+# By default gcc will be used. The major compilers have custom flags available.
 #
 #  export COMPILER=gcc       		# to select the gcc flags
 #  export COMPILER=clang       	# to select the clang flags
-#  export COMPILER=taffo       	# to select the taffo flags
 #
-# or this works as well:-
+# or this works as well:
 #
 #  make COMPILER=gcc
 #  make COMPILER=clang
-#  make COMPILER=taffo
-#
+
 # usage: make                     # Will make all binaries (clover_leaf, test)
 #        make clean               # Will clean up the directory
+#        make clover_leaf         # Will make the clover_leaf binary
 #        make DEBUG=1             # Will select debug options. If a compiler is selected, it will use compiler specific debug options
-# e.g. make COMPILER=gcc DEBUG=1 # will compile with the gcc compiler with gcc debug flags
+# e.g. make COMPILER=clang DEBUG=1 # will compile with the clang compiler with clang debug flags
 
 BASE_BUILD_DIR = build
 BUILD_TYPE = release
@@ -60,13 +40,11 @@ COMPILER_MARKER = $(BUILD_DIR)/$(COMPILER).built
 CFLAGS_gcc   = -O3 -march=native -funroll-loops
 CFLAGS_clang = -O3 -march=native -funroll-loops
 CFLAGS_taffo = -O3 -march=native -funroll-loops
-CFLAGS_      = -O3
 
 ifdef DEBUG
   CFLAGS_gcc   = -Og -g -Wall -Wextra -fbounds-check
   CFLAGS_clang = -Og -g -Wall -Wextra -fbounds-check
   CFLAGS_taffo = -Og -g -Wall -Wextra -fbounds-check
-  CFLAGS_      = -Og -g
 endif
 
 ifdef IEEE

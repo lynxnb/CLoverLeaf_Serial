@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2022 Niccolò Betto
+
 #include "data.h"
 #include "definitions.h"
 #include "parse.h"
