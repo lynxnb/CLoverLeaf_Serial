@@ -2,8 +2,7 @@
 // Copyright (C) 2022 Niccolò Betto
 
 #include "types/data.h"
-#include <bits/types/FILE.h>
-#include <stddef.h>
+#include <stdio.h>
 
 FILE *g_in = NULL;
 FILE *g_out = NULL;

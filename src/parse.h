@@ -4,7 +4,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include <bits/types/FILE.h>
+#include <stdio.h>
 
 extern char *line;
 

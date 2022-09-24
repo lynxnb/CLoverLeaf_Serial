@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <bits/types/FILE.h>
+#include <stdio.h>
 #include "types/data.h"
 
 #define g_version         1.3
