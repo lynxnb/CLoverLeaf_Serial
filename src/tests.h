@@ -32,7 +32,7 @@ static void cleanup() {
 
 #define RUN_TEST(x)                                                            \
   do {                                                                         \
-    puts("\x1b[7m"                                                             \
+    puts("\n\x1b[7m"                                                           \
          " TEST "                                                              \
          "\x1b[0m " #x);                                                       \
     x();                                                                       \

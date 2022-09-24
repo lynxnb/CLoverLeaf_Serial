@@ -6,3 +6,5 @@
 extern void clover_init_comms();
 
 extern void clover_abort();
+
+extern void clover_min(double dt);

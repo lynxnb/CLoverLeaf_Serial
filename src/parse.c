@@ -3,7 +3,7 @@
 
 #include "data.h"
 #include "report.h"
-#include "string_util.h"
+#include "utils/string.h"
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>

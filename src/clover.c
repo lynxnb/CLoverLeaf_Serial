@@ -27,3 +27,7 @@ void clover_abort() {
 
   exit(1);
 }
+
+void clover_min(double dt) {
+  // empty
+}

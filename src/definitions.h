@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "definitions_types.h"
+#include "types/definitions.h"
 #include <stdbool.h>
 
 extern state_type *states; // allocatable

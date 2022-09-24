@@ -3,9 +3,11 @@
 
 #include "clover.h"
 #include "data.h"
-#include "hydro.h"
-#include "initialise.h"
 #include <stdio.h>
+
+extern void initialise();
+
+extern void hydro();
 
 int main(int argc, char **argv) {
   clover_init_comms();
