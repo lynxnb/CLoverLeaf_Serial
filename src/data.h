@@ -3,9 +3,10 @@
 
 #pragma once
 
-#include <stdio.h>
 #include "types/data.h"
+#include <stdio.h>
 
+// clang-format off
 #define g_version         1.3
 
 #define g_ibig         640000
@@ -17,10 +18,10 @@
 #define g_xdir              1
 #define g_ydir              2
 
-#define CHUNK_LEFT          1
-#define CHUNK_RIGHT         2
-#define CHUNK_BOTTOM        3
-#define CHUNK_TOP           4
+#define CHUNK_LEFT          0 // 1
+#define CHUNK_RIGHT         1 // 2
+#define CHUNK_BOTTOM        2 // 3
+#define CHUNK_TOP           3 // 4
 #define EXTERNAL_FACE      -1
 
 #define TILE_LEFT           1
@@ -61,6 +62,7 @@
 #define g_point             3
 
 #define g_len_max         500
+// clang-format off
 
 extern FILE *g_in, *g_out;
 

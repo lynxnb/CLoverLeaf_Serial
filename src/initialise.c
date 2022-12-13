@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
+#include "clover.h"
 #include "data.h"
 #include "definitions.h"
+#include "kernels/kernels.h"
 #include "parse.h"
 #include "report.h"
+#include "types/definitions.h"
 #include "utils/math.h"
 #include "utils/string.h"
 #include <errno.h>
@@ -13,6 +16,10 @@
 #include <string.h>
 
 void read_input();
+
+void start();
+
+void build_field();
 
 void initialise() {
   FILE *uin = NULL, *out_unit = NULL;
@@ -25,8 +32,7 @@ void initialise() {
       report_error("initialise", "Error opening clover.out file.");
     }
 
-    fprintf(g_out, "Clover Version %f\nMPI Version\nTask Count %d\n", g_version,
-            parallel.max_task);
+    fprintf(g_out, "Clover Version %f\nMPI Version\nTask Count %d\n", g_version, parallel.max_task);
 
     puts("Output file clover.out opened. All output will go there.");
 
@@ -99,6 +105,8 @@ void initialise() {
   read_input();
 
   step = 0;
+
+  start();
 
   if (parallel.boss)
     fputs("Starting the calculation", g_out);
@@ -403,8 +411,7 @@ void read_input() {
   if (parallel.boss) {
     fputc('\n', g_out);
     if (use_fortran_kernels) {
-      fputs("Fortran kernels were requested but they are not available\n",
-            g_out);
+      fputs("Fortran kernels were requested but they are not available\n", g_out);
       use_fortran_kernels = false;
       use_C_kernels = true;
       fputs("Using C Kernels\n", g_out);
@@ -426,3 +433,97 @@ void read_input() {
     states[i].ymax = states[i].ymax - (dy / 100.0);
   }
 }
+
+void start() {
+  int c, tile;
+
+  int x_cells, y_cells;
+  int right, left, top, bottom;
+
+  int fields[NUM_FIELDS];
+
+  bool profiler_off;
+
+  if (parallel.boss) {
+    fputs("Setting up initial geometry\n", g_out);
+  }
+
+  time = 0.0;
+  step = 0;
+  dtold = dtinit;
+  dt = dtinit;
+
+  number_of_chunks = clover_get_num_chunks();
+  clover_decompose(grid.x_cells, grid.y_cells, left, right, bottom, top);
+
+  // Create the chunks
+  chunk.task = parallel.task;
+
+  x_cells = right - left + 1;
+  y_cells = top - bottom + 1;
+
+  chunk.left = left;
+  chunk.bottom = bottom;
+  chunk.right = right;
+  chunk.top = top;
+  chunk.left_boundary = 1;
+  chunk.bottom_boundary = 1;
+  chunk.right_boundary = grid.x_cells;
+  chunk.top_boundary = grid.y_cells;
+  chunk.x_min = 1;
+  chunk.y_min = 1;
+  chunk.x_max = x_cells;
+  chunk.y_max = y_cells;
+
+  // Create the tiles
+  chunk.tiles = (tile_type *)malloc(tiles_per_chunk * sizeof(tile_type));
+  clover_tile_decompose(x_cells, y_cells);
+
+  build_field();
+
+  clover_allocate_buffers();
+
+  if (parallel.boss)
+    fputs("Generating chunks", g_out);
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    initialise_chunk(tile);
+    generate_chunk(tile);
+  }
+
+  advect_x = true;
+
+  // Do no profile the start up costs otherwise the total times will not add up
+  // at the end
+  profiler_off = profiler_on;
+  profiler_on = false;
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++)
+    ideal_gas(&chunk.tiles[tile], false);
+
+  memset(fields, 0, sizeof(fields));
+  fields[FIELD_DENSITY0] = 1;
+  fields[FIELD_ENERGY0] = 1;
+  fields[FIELD_PRESSURE] = 1;
+  fields[FIELD_VISCOSITY] = 1;
+  fields[FIELD_DENSITY1] = 1;
+  fields[FIELD_ENERGY1] = 1;
+  fields[FIELD_XVEL0] = 1;
+  fields[FIELD_YVEL0] = 1;
+  fields[FIELD_XVEL1] = 1;
+  fields[FIELD_YVEL1] = 1;
+
+  update_halo(fields, 2);
+
+  if (parallel.boss)
+    fputs("\nProblem initalised and generated", g_out);
+
+  field_summary();
+
+  if (visit_frequency != 0)
+    visit();
+
+  profiler_on = profiler_off;
+}
+
+void build_field() {}

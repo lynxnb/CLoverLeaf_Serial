@@ -1,0 +1,8 @@
+# Config tool: https://zed0.co.uk/clang-format-configurator/
+---
+BasedOnStyle: LLVM
+AlwaysBreakTemplateDeclarations: 'Yes'
+AllowShortFunctionsOnASingleLine: 'Empty'
+ColumnLimit: 120
+Standard: Cpp11
+...

@@ -59,13 +59,13 @@ typedef struct field_type_t {
   double *mass_flux_x;
   double *vol_flux_y;
   double *mass_flux_y;
-  double *work_array1;
-  double *work_array2;
-  double *work_array3;
-  double *work_array4;
-  double *work_array5;
-  double *work_array6;
-  double *work_array7;
+  double *work_array1; //node_flux, stepbymass, volume_change, pre_vol
+  double *work_array2; // node_mass_post, post_vol
+  double *work_array3; // node_mass_pre,pre_mass
+  double *work_array4; // advec_vel, post_mass 
+  double *work_array5; // mom_flux, advec_vol 
+  double *work_array6; // pre_vol, post_ener
+  double *work_array7; // post_vol, ener_flux
 
   double *cellx;
   double *celly;

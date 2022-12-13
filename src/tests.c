@@ -59,15 +59,12 @@ void test_parse_file() {
 }
 
 void test_timestep_print() {
-  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x "
-         "%9.2e y %9.2e\n",
-         1, 0.0000000, "sound", 6.16e-03, 1, 1, 6.01e-154, 6.01e-154);
-  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x "
-         "%9.2e y %9.2e\n",
-         2, 0.0061626, "sound", 3.76e-03, 1, 1, 3.81e-320, 6.94e-310);
-  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x "
-         "%9.2e y %9.2e\n",
-         3, 0.0099242, "sound", 4.78e-03, 1, 1, 3.81e-320, 4.76e-321);
+  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 1, 0.0000000, "sound",
+         6.16e-03, 1, 1, 6.01e-154, 6.01e-154);
+  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 2, 0.0061626, "sound",
+         3.76e-03, 1, 1, 3.81e-320, 6.94e-310);
+  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 3, 0.0099242, "sound",
+         4.78e-03, 1, 1, 3.81e-320, 4.76e-321);
 }
 
 int main(int argc, char **argv) {

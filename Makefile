@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2022 Niccolò Betto
 
-# @brief Makefile for CloverLeaf Cereal
+# @brief Makefile for CloverLeaf Serial
 # @author Niccolò Betto
 
 # By default gcc will be used. The major compilers have custom flags available.
@@ -40,7 +40,7 @@ CLOVER_EXCLUDE = $(SRC)/tests.c
 TEST_EXCLUDE = $(SRC)/clover_leaf.c\
                $(SRC)/report.c
 
-SOURCES = $(filter-out $(CLOVER_EXCLUDE), $(wildcard $(SRC)/*.c src/*/*.c))
+SOURCES = $(filter-out $(CLOVER_EXCLUDE), $(wildcard $(SRC)/*.c $(SRC)/*/*.c))
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDE), $(wildcard $(SRC)/*.c $(SRC)/*/*.c))
 
 OBJECTS = $(SOURCES:$(SRC)/%.c=$(OBJECT_DIR)/%.o)
@@ -88,12 +88,12 @@ CFLAGS = $(CFLAGS_$(CC)) $(I3E)
 all: clover_leaf test
 
 clover_leaf: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(OBJECTS)
-	@echo Linking final executable...
+	@echo Linking $@ executable...
 	@$(CC) $(CFLAGS) $(OBJECTS) -o $(BIN_DIR)/$@
 	@echo Done.
 
 test: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(TEST_OBJECTS)
-	@echo Linking final executable...
+	@echo Linking $@ executable...
 	@$(CC) $(CFLAGS) $(TEST_OBJECTS) -o $(BIN_DIR)/$@
 	@echo Done building tests.
 

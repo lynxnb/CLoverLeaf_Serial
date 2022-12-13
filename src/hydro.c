@@ -23,5 +23,6 @@ void hydro() {
     step++;
 
     timestep();
+    PdV(true);
   }
 }

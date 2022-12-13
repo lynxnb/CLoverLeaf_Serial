@@ -3,20 +3,18 @@
 
 #include "data.h"
 #include "definitions.h"
+#include "kernels/kernels.h"
 #include "report.h"
 #include "utils/math.h"
 #include "utils/timer.h"
 #include <stdio.h>
 #include <string.h>
 
-void ideal_gas(int tile, bool predict);
-
 void update_halo(int fields[static NUM_FIELDS], int depth);
 
 void viscosity();
 
-void calc_dt(int tile, double local_dt, char local_control[static 8],
-             double xl_pos, double yl_pos, int jldt, int kldt);
+void calc_dt(int tile, double local_dt, char local_control[static 8], double xl_pos, double yl_pos, int jldt, int kldt);
 
 void timestep() {
   int tile;
@@ -90,9 +88,7 @@ void timestep() {
     small = 1;
 
   if (parallel.boss) {
-    const char *format =
-        " Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x "
-        "%9.2e y %9.2e";
+    const char *format = " Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e";
     fprintf(g_out, format, step, time, dt_control, dt, jdt, kdt, x_pos, y_pos);
     printf(format, step, time, dt_control, dt, jdt, kdt, x_pos, y_pos);
   }
@@ -103,10 +99,6 @@ void timestep() {
   dtold = dt;
 }
 
-void ideal_gas(int tile, bool predict) {
-  // ideal_gas_kernel
-}
-
 void update_halo(int fields[static NUM_FIELDS], int depth) {
   // update_halo_kernel
 }
@@ -115,8 +107,8 @@ void viscosity() {
   // viscosity_kernel
 }
 
-void calc_dt(int tile, double local_dt, char local_control[static 8],
-             double xl_pos, double yl_pos, int jldt, int kldt) {
+void calc_dt(int tile, double local_dt, char local_control[static 8], double xl_pos, double yl_pos, int jldt,
+             int kldt) {
   int small = 0, l_control;
   local_dt = g_big;
 

@@ -10,19 +10,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-static FILE *file; //< iu: current file
+static FILE *file; // iu: current file
 
 char line_buf[100]; // Line buffer
 
 char *line;
-char *mask; //< mask: section of the file the user is interested in
+char *mask; // mask: section of the file the user is interested in
 char *rest;
-char cur_section[100]; //< here: section the parser is currently in
-char active_sel[100];  //< sel: active selector (*select: statement)
+char cur_section[100]; // here: section the parser is currently in
+char active_sel[100];  // sel: active selector (*select: statement)
 
 int parse_init(FILE *p_file, char *cmask) {
   file = p_file;
-  mask = cmask; // Set mask for which part of the file we are interested in
+  mask = cmask;       // Set mask for which part of the file we are interested in
   line_buf[0] = '\0'; // Reset the line buffer
   line = "";
   cur_section[0] = '\0';
@@ -76,8 +76,7 @@ int parse_getline(const int arg) {
 
     if (!strcmp(line, "*select:")) {
       report_error("parse_getline",
-                   "'*select:' support is not implemented, please init the "
-                   "parser with a mask instead");
+                   "'*select:' support is not implemented, please init the parser with a mask instead");
       /*
       // Save selector and continue to the next line
       strcpy(selector, trim(line + 8));
@@ -97,9 +96,7 @@ int parse_getline(const int arg) {
       if (!strncmp(section_tag + 1, "end", 3)) {
         // Check the active section tag
         if (cur_section[0] == '\0' || strcmp(section_tag + 4, cur_section + 1))
-          report_error_arg(
-              "parse_getline",
-              "Unmatched */*end pair for section: ", cur_section + 1);
+          report_error_arg("parse_getline", "Unmatched */*end pair for section: ", cur_section + 1);
         else
           cur_section[0] = '\0';
       } else {
@@ -157,8 +154,7 @@ int parse_getival(const char *word) {
   errno = 0;
   ival = strtol(word, &end, 10);
   if (errno != 0)
-    report_error_arg("parse_getival",
-                     "Error attempting to convert to integer: ", word);
+    report_error_arg("parse_getival", "Error attempting to convert to integer: ", word);
 
   return ival;
 }
@@ -173,8 +169,7 @@ bool parse_getlval(const char *word) {
   } sswitch_end;
   // clang-format on
 
-  report_error_arg("parse_getlval",
-                   "Error attempting to convert to logical:", word);
+  report_error_arg("parse_getlval", "Error attempting to convert to logical:", word);
   __builtin_unreachable();
 }
 
@@ -185,8 +180,7 @@ double parse_getrval(const char *word) {
   errno = 0;
   rval = strtod(word, &end);
   if (errno != 0)
-    report_error_arg("parse_getrval",
-                     "Error attempting to convert to real:", word);
+    report_error_arg("parse_getrval", "Error attempting to convert to real:", word);
 
   return rval;
 }

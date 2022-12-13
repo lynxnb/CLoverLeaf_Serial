@@ -30,21 +30,21 @@ static void cleanup() {
   fail_reason[0] = '\0';
 }
 
-#define RUN_TEST(x)                                                            \
-  do {                                                                         \
-    puts("\n\x1b[7m"                                                           \
-         " TEST "                                                              \
-         "\x1b[0m " #x);                                                       \
-    x();                                                                       \
-    if (!fail) {                                                               \
-      puts("\x1b[32m\x1b[7m"                                                   \
-           " PASS "                                                            \
-           "\x1b[0m " #x);                                                     \
-    } else {                                                                   \
-      puts("\x1b[31m\x1b[7m"                                                   \
-           " FAIL "                                                            \
-           "\x1b[0m " #x);                                                     \
-      puts(fail_reason);                                                       \
-    }                                                                          \
-    cleanup();                                                                 \
+#define RUN_TEST(x)                                                                                                    \
+  do {                                                                                                                 \
+    puts("\n\x1b[7m"                                                                                                   \
+         " TEST "                                                                                                      \
+         "\x1b[0m " #x);                                                                                               \
+    x();                                                                                                               \
+    if (!fail) {                                                                                                       \
+      puts("\x1b[32m\x1b[7m"                                                                                           \
+           " PASS "                                                                                                    \
+           "\x1b[0m " #x);                                                                                             \
+    } else {                                                                                                           \
+      puts("\x1b[31m\x1b[7m"                                                                                           \
+           " FAIL "                                                                                                    \
+           "\x1b[0m " #x);                                                                                             \
+      puts(fail_reason);                                                                                               \
+    }                                                                                                                  \
+    cleanup();                                                                                                         \
   } while (0)
