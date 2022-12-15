@@ -190,6 +190,15 @@ void test_relative_array_indexing_2D() {
   free(matrix);
 }
 
+extern void build_field();
+
+void test_build_field() {
+  tiles_per_chunk = 1;
+  chunk.tiles = malloc(tiles_per_chunk * sizeof(tile_type));
+
+  build_field();
+}
+
 int main(int argc, char **argv) {
   puts("*** CLoverLeaf unit test runner ***");
   file_in = fopen("clover.in", "r");
@@ -201,6 +210,7 @@ int main(int argc, char **argv) {
   RUN_TEST(test_timestep_print);
   RUN_TEST(test_relative_array_indexing_1D);
   RUN_TEST(test_relative_array_indexing_2D);
+  RUN_TEST(test_build_field);
 
   puts("\nAll tests passed!");
   return 0;
