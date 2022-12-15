@@ -19,8 +19,16 @@ void read_input();
 
 void start();
 
-void build_field();
+/**
+ * @file allocate.c
+ */
+extern void build_field();
 
+/**
+ * @brief Top level initialisation routine
+ * @details Checks for the user input and either invokes the input reader or switches to the internal test problem. It
+ * processes the input and strips comments before writing a final input file. It then calls the start routine.
+ */
 void initialise() {
   FILE *uin = NULL, *out_unit = NULL;
 
@@ -32,7 +40,7 @@ void initialise() {
       report_error("initialise", "Error opening clover.out file.");
     }
 
-    fprintf(g_out, "Clover Version %f\nMPI Version\nTask Count %d\n", g_version, parallel.max_task);
+    fprintf(g_out, "Clover Version %f\nMPI Version\nTask Count %d\n", G_VERSION, parallel.max_task);
 
     puts("Output file clover.out opened. All output will go there.");
 
@@ -114,6 +122,11 @@ void initialise() {
   fclose(g_in);
 }
 
+/**
+ * @brief Reads the user input
+ * @details Reads and parses the user input from the processed file and sets the variables used in the generation phase.
+ * Default values are also set here.
+ */
 void read_input() {
   int state, stat, state_max;
   double dx, dy;
@@ -131,7 +144,7 @@ void read_input() {
   grid.y_cells = 10;
 
   end_time = 10.0;
-  end_step = g_ibig;
+  end_step = G_IBIG;
   complete = false;
 
   visit_frequency = 0;
@@ -196,7 +209,7 @@ void read_input() {
 
   stat = parse_init(g_in, "*clover");
 
-  states = (state_type *)malloc(number_of_states * sizeof(state_type));
+  states = malloc(number_of_states * sizeof(state_type));
   for (int i = 0; i < number_of_states; i++) {
     states[i].defined = false;
     states[i].energy = 0.0;
@@ -318,7 +331,9 @@ void read_input() {
             fprintf(g_out, "test_problem %d\n", test_problem);
           break;
         scase("state")
-          state = parse_getival(parse_getword(true));
+          // Subtract 1 because the state number in the input file is 1-based,
+          // but the state number in the code is 0-based
+          state = parse_getival(parse_getword(true)) - 1;
 
           if (parallel.boss) {
             fprintf(g_out, "Reading specification for state %d\n\n", state);
@@ -382,17 +397,17 @@ void read_input() {
                 word = trim(parse_getword(true));
                 sswitch(word) {
                   scase("rectangle")
-                    states[state].geometry = g_rect;
+                    states[state].geometry = G_RECT;
                     if (parallel.boss)
                       fputs("state geometry rectangular\n", g_out);
                     break;
                   scase("circle")
-                    states[state].geometry = g_circ;
+                    states[state].geometry = G_CIRC;
                     if (parallel.boss)
                       fputs("state geometry circular\n", g_out);
                     break;
                   scase("point")
-                    states[state].geometry = g_point;
+                    states[state].geometry = G_POINT;
                     if (parallel.boss)
                       fputs("state geometry point\n", g_out);
                     break;
@@ -424,6 +439,12 @@ void read_input() {
     fputs("\nInput read finished.\n", g_out);
   }
 
+  // If a state boundary falls exactly on a cell boundary then round off can
+  // cause the state to be put one cell further that expected. This is compiler-
+  // system dependent. To avoid this, a state boundary is reduced/increased by a 100th
+  // of a cell width so it lies well with in the intended cell.
+  // Because a cell is either full or empty of a specified state, this small
+  // modification to the state extents does not change the answers.
   dx = (grid.xmax - grid.xmin) / (float)grid.x_cells;
   dy = (grid.ymax - grid.ymin) / (float)grid.y_cells;
   for (int i = 2; i < number_of_states; i++) {
@@ -434,6 +455,12 @@ void read_input() {
   }
 }
 
+/**
+ * @brief Main set up routine
+ * @details Invokes the mesh decomposer and sets up chunk connectivity. It then allocates the communication buffers and
+ * call the chunk initialisation and generation routines. It calls the equation of state to calculate initial pressure
+ * before priming the halo cells and writing an initial field summary.
+ */
 void start() {
   int c, tile;
 
@@ -454,7 +481,7 @@ void start() {
   dt = dtinit;
 
   number_of_chunks = clover_get_num_chunks();
-  clover_decompose(grid.x_cells, grid.y_cells, left, right, bottom, top);
+  clover_decompose(grid.x_cells, grid.y_cells, &left, &right, &bottom, &top);
 
   // Create the chunks
   chunk.task = parallel.task;
@@ -476,7 +503,7 @@ void start() {
   chunk.y_max = y_cells;
 
   // Create the tiles
-  chunk.tiles = (tile_type *)malloc(tiles_per_chunk * sizeof(tile_type));
+  chunk.tiles = malloc(tiles_per_chunk * sizeof(tile_type));
   clover_tile_decompose(x_cells, y_cells);
 
   build_field();
@@ -488,7 +515,7 @@ void start() {
 
   for (int tile = 0; tile < tiles_per_chunk; tile++) {
     initialise_chunk(tile);
-    generate_chunk(tile);
+    // generate_chunk(tile);
   }
 
   advect_x = true;
@@ -513,17 +540,15 @@ void start() {
   fields[FIELD_XVEL1] = 1;
   fields[FIELD_YVEL1] = 1;
 
-  update_halo(fields, 2);
+  // update_halo(fields, 2);
 
   if (parallel.boss)
     fputs("\nProblem initalised and generated", g_out);
 
-  field_summary();
+  // field_summary();
 
   if (visit_frequency != 0)
-    visit();
+    // visit();
 
-  profiler_on = profiler_off;
+    profiler_on = profiler_off;
 }
-
-void build_field() {}

@@ -1,6 +1,6 @@
 {
   "files.associations": {
-    "kernels.h": "c",
-    "string.h": "c"
-  }
+    "*.h": "c",
+  },
+  "fortran.fortls.disabled": true
 }

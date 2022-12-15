@@ -17,6 +17,9 @@
 # usage: make                     # Will make all binaries (clover_leaf, test)
 #        make clean               # Will clean up the directory
 #        make clover_leaf         # Will make the clover_leaf binary
+# 			 make test                # Will make the test binary
+# 			 make run                 # Will make and run the clover_leaf binary
+# 			 make run-test            # Will make and run the test binary
 #        make DEBUG=1             # Will select debug flags
 # e.g. make CC=clang DEBUG=1 # will compile with the clang compiler with clang debug flags
 
@@ -77,6 +80,9 @@ ifdef IEEE
   I3E=$(I3E_$(CC))
 endif
 
+# Lib / Includes
+LIBS = -lm
+
 CFLAGS = $(CFLAGS_$(CC)) $(I3E)
 
 #-----------------------------------------------------
@@ -89,12 +95,12 @@ all: clover_leaf test
 
 clover_leaf: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(OBJECTS)
 	@echo Linking $@ executable...
-	@$(CC) $(CFLAGS) $(OBJECTS) -o $(BIN_DIR)/$@
+	@$(CC) $(CFLAGS) $(OBJECTS) -o $(BIN_DIR)/$@ $(LIBS)
 	@echo Done.
 
 test: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(TEST_OBJECTS)
 	@echo Linking $@ executable...
-	@$(CC) $(CFLAGS) $(TEST_OBJECTS) -o $(BIN_DIR)/$@
+	@$(CC) $(CFLAGS) $(TEST_OBJECTS) -o $(BIN_DIR)/$@ $(LIBS)
 	@echo Done building tests.
 
 $(OBJECT_DIR)/%.o: $(SRC)/%.c Makefile $(CC_MARKER)

@@ -59,7 +59,7 @@ typedef struct field_type_t {
   double *mass_flux_x;
   double *vol_flux_y;
   double *mass_flux_y;
-  double *work_array1; //node_flux, stepbymass, volume_change, pre_vol
+  double *work_array1; // node_flux, stepbymass, volume_change, pre_vol
   double *work_array2; // node_mass_post, post_vol
   double *work_array3; // node_mass_pre,pre_mass
   double *work_array4; // advec_vel, post_mass 
@@ -84,7 +84,7 @@ typedef struct field_type_t {
 typedef struct tile_type_t {
   field_type field;
   int tile_neighbours[4];
-  int external_tile_marks[4];
+  int external_tile_mask[4];
   
   int t_xmin;
   int t_xmax;

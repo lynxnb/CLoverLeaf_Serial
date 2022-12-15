@@ -7,16 +7,16 @@
 #include <stdio.h>
 
 // clang-format off
-#define g_version         1.3
+#define G_VERSION         1.3
 
-#define g_ibig         640000
+#define G_IBIG         640000
 
-#define g_small       1.0e-16
-#define g_big         1.0e+21
+#define G_SMALL       1.0e-16
+#define G_BIG         1.0e+21
 
-#define g_name_len_max    225
-#define g_xdir              1
-#define g_ydir              2
+#define G_NAME_LEN_MAX    225
+#define G_XDIR              1
+#define G_YDIR              2
 
 #define CHUNK_LEFT          0 // 1
 #define CHUNK_RIGHT         1 // 2
@@ -57,11 +57,11 @@
 #define Y_VEL               3
 #define DIVERG              4
 
-#define g_rect              1
-#define g_circ              2
-#define g_point             3
+#define G_RECT              1
+#define G_CIRC              2
+#define G_POINT             3
 
-#define g_len_max         500
+#define G_LEN_MAX         500
 // clang-format off
 
 extern FILE *g_in, *g_out;
