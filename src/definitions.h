@@ -33,7 +33,7 @@ extern int end_step;
 
 extern double dtold;
 extern double dt;
-extern double time;
+extern double time_val;
 extern double dtinit;
 extern double dtmin;
 extern double dtmax;

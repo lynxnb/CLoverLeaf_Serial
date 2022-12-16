@@ -475,7 +475,7 @@ void start() {
     fputs("Setting up initial geometry\n", g_out);
   }
 
-  time = 0.0;
+  time_val = 0.0;
   step = 0;
   dtold = dtinit;
   dt = dtinit;

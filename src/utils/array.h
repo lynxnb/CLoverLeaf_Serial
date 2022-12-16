@@ -36,6 +36,27 @@ extern float *array_shift_indexing_1D_float(float *ptr, size_t lower_bound);
 extern double *array_shift_indexing_1D_double(double *ptr, size_t lower_bound);
 
 /**
+ * @brief Reverts the shift performed by `array_shift_indexing_1D_*` on the given array
+ * @param ptr A pointer to the array, with indexing range [lower_bound, N - lower_bound]
+ * @returns A pointer to the original array, with indexing range [0, N]
+ */
+extern int *array_revert_indexing_1D_int(int *ptr, size_t lower_bound);
+
+/**
+ * @brief Reverts the shift performed by `array_shift_indexing_1D_*` on the given array
+ * @param ptr A pointer to the array, with indexing range [lower_bound, N - lower_bound]
+ * @returns A pointer to the original array, with indexing range [0, N]
+ */
+extern float *array_revert_indexing_1D_float(float *ptr, size_t lower_bound);
+
+/**
+ * @brief Reverts the shift performed by `array_shift_indexing_1D_*` on the given array
+ * @param ptr A pointer to the array, with indexing range [lower_bound, N - lower_bound]
+ * @returns A pointer to the original array, with indexing range [0, N]
+ */
+extern double *array_revert_indexing_1D_double(double *ptr, size_t lower_bound);
+
+/**
  * @brief Shifts the given 2-dimensional array indexing range to [lower_bound_x, N - lower_bound_x] for the first
  * dimension and [lower_bound_y, N - lower_bound_y] for the second dimension
  * @param ptr A pointer to the array, with indexing range [0, N], [0, N]
@@ -63,3 +84,29 @@ extern float *array_shift_indexing_2D_float(float *ptr, size_t lower_bound_y, si
  */
 extern double *array_shift_indexing_2D_double(double *ptr, size_t lower_bound_y, size_t lower_bound_x,
                                               size_t upper_bound_x);
+
+/**
+ * @brief Reverts the shift performed by `array_shift_indexing_2D_*` on the given 2-dimensional array
+ * @param ptr A pointer to the array, with indexing range [lower_bound_x, N - lower_bound_x] for the first dimension and
+ * [lower_bound_y, N - lower_bound_y] for the second dimension
+ * @returns A pointer to the original 2-dimensional array, with indexing range [0, N], [0, N]
+ */
+extern int *array_revert_indexing_2D_int(int *ptr, size_t lower_bound_y, size_t lower_bound_x, size_t upper_bound_x);
+
+/**
+ * @brief Reverts the shift performed by `array_shift_indexing_2D_*` on the given 2-dimensional array
+ * @param ptr A pointer to the array, with indexing range [lower_bound_x, N - lower_bound_x] for the first dimension and
+ * [lower_bound_y, N - lower_bound_y] for the second dimension
+ * @returns A pointer to the original 2-dimensional array, with indexing range [0, N], [0, N]
+ */
+extern float *array_revert_indexing_2D_float(float *ptr, size_t lower_bound_y, size_t lower_bound_x,
+                                             size_t upper_bound_x);
+
+/**
+ * @brief Reverts the shift performed by `array_shift_indexing_2D_*` on the given 2-dimensional array
+ * @param ptr A pointer to the array, with indexing range [lower_bound_x, N - lower_bound_x] for the first dimension and
+ * [lower_bound_y, N - lower_bound_y] for the second dimension
+ * @returns A pointer to the original 2-dimensional array, with indexing range [0, N], [0, N]
+ */
+extern double *array_revert_indexing_2D_double(double *ptr, size_t lower_bound_y, size_t lower_bound_x,
+                                               size_t upper_bound_x);

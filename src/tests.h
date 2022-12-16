@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 
+// Log enable
+static bool log_enabled = true;
+
 // Static test data
 static FILE *file_in;
 static bool fail = false;
@@ -37,14 +40,20 @@ static void cleanup() {
          "\x1b[0m " #x);                                                                                               \
     x();                                                                                                               \
     if (!fail) {                                                                                                       \
-      puts("\n\x1b[32m\x1b[7m"                                                                                         \
+      puts("\x1b[32m\x1b[7m"                                                                                           \
            " PASS "                                                                                                    \
            "\x1b[0m " #x);                                                                                             \
     } else {                                                                                                           \
-      puts("\n\x1b[31m\x1b[7m"                                                                                         \
+      puts("\x1b[31m\x1b[7m"                                                                                           \
            " FAIL "                                                                                                    \
            "\x1b[0m " #x);                                                                                             \
       puts(fail_reason);                                                                                               \
     }                                                                                                                  \
     cleanup();                                                                                                         \
+  } while (0)
+
+#define LOG_PRINT(...)                                                                                                 \
+  do {                                                                                                                 \
+    if (log_enabled)                                                                                                   \
+      printf(__VA_ARGS__);                                                                                             \
   } while (0)

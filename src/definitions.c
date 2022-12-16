@@ -30,7 +30,7 @@ int end_step;
 
 double dtold;
 double dt;
-double time;
+double time_val;
 double dtinit;
 double dtmin;
 double dtmax;

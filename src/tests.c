@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "tests.h"
 
@@ -17,12 +18,12 @@ void test_parse_getword() {
 
   parse_init(file_in, "");
   line = test;
-  printf("Parsing: '%s'\n", line);
+  LOG_PRINT("Parsing: '%s'\n", line);
 
   fflush(stdout);
 
   char *word = parse_getword(false);
-  printf("Result: '%s'\n", word);
+  LOG_PRINT("Result: '%s'\n", word);
 }
 
 /**
@@ -32,7 +33,7 @@ void test_parse_getline() {
   parse_init(file_in, "*clover");
 
   while (parse_getline(0) == 0) {
-    printf("Parsing: '%s'\n", line);
+    LOG_PRINT("Parsing: '%s'\n", line);
   }
 }
 
@@ -43,7 +44,7 @@ void test_parse_getline_getword() {
     char l[100];
     strcpy(l, line);
     char *word = parse_getword(false);
-    printf("Word: '%s' in line '%s'\n", word, l);
+    LOG_PRINT("Word: '%s' in line '%s'\n", word, l);
   }
   parse_getword(true);
 }
@@ -54,7 +55,7 @@ void test_parse_file() {
   parallel.boss = true;
   parallel.max_task = 1;
 
-  printf("Reading clover.in\n");
+  LOG_PRINT("Reading clover.in\n");
   g_in = file_in;
   g_out = stdout;
   read_input();
@@ -63,11 +64,11 @@ void test_parse_file() {
 }
 
 void test_timestep_print() {
-  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 1, 0.0000000, "sound",
+  LOG_PRINT("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 1, 0.0000000, "sound",
          6.16e-03, 1, 1, 6.01e-154, 6.01e-154);
-  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 2, 0.0061626, "sound",
+  LOG_PRINT("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 2, 0.0061626, "sound",
          3.76e-03, 1, 1, 3.81e-320, 6.94e-310);
-  printf("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 3, 0.0099242, "sound",
+  LOG_PRINT("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 3, 0.0099242, "sound",
          4.78e-03, 1, 1, 3.81e-320, 4.76e-321);
 }
 
@@ -76,34 +77,34 @@ void test_relative_array_indexing_1D() {
   int t_xmax = 3;
   int t_xmin = 1;
 
-  size_t size = (t_xmax + 2) - (t_xmin - 2); // upper_bound - lower_bound + 1
+  size_t size = (t_xmax + 2) - (t_xmin - 2) + 1; // upper_bound - lower_bound + 1
   double *array = calloc(size, sizeof(double));
 
   // Set boundary values
   array[0] = 1.f;
   array[size - 1] = 2.f;
 
-  printf("Array contents:\n");
+  LOG_PRINT("Array contents:\n");
 
   // Print array contents
   for (i = 0; i < size; i++)
-    printf("[%2d]%4.1f\n", i, array[i]);
-  printf("\n");
+    LOG_PRINT("[%2d]%4.1f\n", i, array[i]);
+  LOG_PRINT("\n");
 
-  printf("Array contents by index fiddling:\n");
+  LOG_PRINT("Array contents by index fiddling:\n");
 
   // Print array by index fiddling
   for (i = t_xmin - 2; i <= t_xmax + 2; i++)
-    printf("[%2d]%4.1f\n", i - (t_xmin - 2), array[i - (t_xmin - 2)]);
-  printf("\n");
+    LOG_PRINT("[%2d]%4.1f\n", i - (t_xmin - 2), array[i - (t_xmin - 2)]);
+  LOG_PRINT("\n");
 
-  printf("Array contents by pointer modification:\n");
+  LOG_PRINT("Array contents by pointer modification:\n");
 
   // Print array contents by modifying pointer
   double *array2 = array_shift_indexing_1D_double(array, t_xmin - 2);
 
   for (i = t_xmin - 2; i <= t_xmax + 2; i++)
-    printf("[%2d]%4.1f\n", i, array2[i]);
+    LOG_PRINT("[%2d]%4.1f\n", i, array2[i]);
 
   free(array);
 }
@@ -127,14 +128,14 @@ void test_relative_array_indexing_2D() {
   reference[4][7] = 2.f;
   reference[5][7] = 3.f;
 
-  printf("Reference matrix: [index] value\n");
+  LOG_PRINT("Reference matrix: [index] value\n");
 
   for (y = 0; y < 6; y++) {
     for (x = 0; x < 8; x++)
-      printf("[%2d]%4.1f  ", y * 8 + x, reference[y][x]);
-    printf("\n");
+      LOG_PRINT("[%2d]%4.1f  ", y * 8 + x, reference[y][x]);
+    LOG_PRINT("\n");
   }
-  printf("\n");
+  LOG_PRINT("\n");
 
   // Elements in a column
   int col_size = ((t_ymax + 2) - (t_ymin - 2) + 1); // upper_bound_y - lower_bound_y + 1
@@ -143,7 +144,7 @@ void test_relative_array_indexing_2D() {
 
   double *matrix = calloc(col_size * row_size, sizeof(double));
 
-  printf("Matrix size: %d x %d = %d\n", col_size, row_size, col_size * row_size);
+  LOG_PRINT("Matrix size: %d x %d = %d\n", col_size, row_size, col_size * row_size);
 
   // Fill the matrix with row endings
   matrix[0] = 1.f;
@@ -154,28 +155,28 @@ void test_relative_array_indexing_2D() {
   matrix[4 * row_size + 7] = 2.f;
   matrix[5 * row_size + 7] = 3.f;
 
-  printf("Matrix contents: [index] value\n");
+  LOG_PRINT("Matrix contents: [index] value\n");
 
   // Print matrix contents
   for (y = 0; y < col_size; y++) { // for every row
     for (x = 0; x < row_size; x++) // for every element in the row
-      printf("[%2d]%4.1f  ", y * row_size + x, matrix[y * row_size + x]);
-    printf("\n");
+      LOG_PRINT("[%2d]%4.1f  ", y * row_size + x, matrix[y * row_size + x]);
+    LOG_PRINT("\n");
   }
-  printf("\n");
+  LOG_PRINT("\n");
 
-  printf("Matrix contents by index fiddling: [index] value\n");
+  LOG_PRINT("Matrix contents by index fiddling: [index] value\n");
 
   // Print array by index fiddling
   for (y = t_ymin - 2; y <= t_ymax + 2; y++) { // for every row
     for (x = t_xmin - 2; x <= t_xmax + 2; x++) // for every element in the row
-      printf("[%2d]%4.1f  ", (y - (t_ymin - 2)) * row_size + (x - (t_xmin - 2)),
+      LOG_PRINT("[%2d]%4.1f  ", (y - (t_ymin - 2)) * row_size + (x - (t_xmin - 2)),
              matrix[(y - (t_ymin - 2)) * row_size + (x - (t_xmin - 2))]);
-    printf("\n");
+    LOG_PRINT("\n");
   }
-  printf("\n");
+  LOG_PRINT("\n");
 
-  printf("Matrix contents by pointer modification: [index] value\n");
+  LOG_PRINT("Matrix contents by pointer modification: [index] value\n");
 
   // Print array contents by modifying pointer
   // ptr - lower_bound_y * row_size - lower_bound_x
@@ -183,20 +184,50 @@ void test_relative_array_indexing_2D() {
 
   for (y = t_ymin - 2; y <= t_ymax + 2; y++) { // for every row
     for (x = t_xmin - 2; x <= t_xmax + 2; x++) // for every element in the row
-      printf("[%2d]%4.1f  ", y * row_size + x, matrix2[y * row_size + x]);
-    printf("\n");
+      LOG_PRINT("[%2d]%4.1f  ", y * row_size + x, matrix2[y * row_size + x]);
+    LOG_PRINT("\n");
   }
 
   free(matrix);
 }
 
 extern void build_field();
+extern void destroy_field();
 
 void test_build_field() {
   tiles_per_chunk = 1;
+  LOG_PRINT("Allocating %d tiles per chunk, total size: %zu bytes\n", tiles_per_chunk,
+         tiles_per_chunk * sizeof(tile_type));
   chunk.tiles = malloc(tiles_per_chunk * sizeof(tile_type));
 
+  LOG_PRINT("Building field...\n");
   build_field();
+  LOG_PRINT("Done allocating\n");
+
+  LOG_PRINT("Destroying fields...\n");
+  destroy_field();
+  free(chunk.tiles);
+  LOG_PRINT("Done deallocating\n");
+}
+
+void test_build_field_stress() {
+  // Should take about 20 second to run on a reasonably fast machine
+  // Ensures that the memory is freed properly
+  LOG_PRINT("Running build_field test 10 million times, hold tight...\n");
+
+  // Save previous log state
+  bool prev_log_enabled = log_enabled;
+  // Silence log to avoid spamming the console (also makes the test run much faster)
+  log_enabled = false;
+  
+  clock_t start = clock();
+  for (int i = 0; i < 10000000; i++) {
+    test_build_field();
+  }
+
+  // Restore log
+  log_enabled = prev_log_enabled;
+  LOG_PRINT("Done.\nTook %.3f seconds\n", (double)(clock() - start) / CLOCKS_PER_SEC);
 }
 
 int main(int argc, char **argv) {
@@ -211,6 +242,7 @@ int main(int argc, char **argv) {
   RUN_TEST(test_relative_array_indexing_1D);
   RUN_TEST(test_relative_array_indexing_2D);
   RUN_TEST(test_build_field);
+  RUN_TEST(test_build_field_stress);
 
   puts("\nAll tests passed!");
   return 0;

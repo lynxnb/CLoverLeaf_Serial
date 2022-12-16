@@ -41,7 +41,7 @@ void hydro() {
 
     advect_x = !advect_x;
 
-    time = time + dt;
+    time_val += dt;
 
     if (summary_frequency != 0 && step % summary_frequency == 0)
       // field_summary();
@@ -58,7 +58,7 @@ void hydro() {
         else if (step == 2)
           second_step = timer() - step_time;
 
-    if (time + G_SMALL > end_time || step >= end_step) {
+    if (time_val + G_SMALL > end_time || step >= end_step) {
       complete = true;
       // field_summary();
       if (visit_frequency != 0)
@@ -176,8 +176,8 @@ void timestep() {
 
   if (parallel.boss) {
     const char *format = " Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e";
-    fprintf(g_out, format, step, time, dt_control, dt, jdt, kdt, x_pos, y_pos);
-    printf(format, step, time, dt_control, dt, jdt, kdt, x_pos, y_pos);
+    fprintf(g_out, format, step, time_val, dt_control, dt, jdt, kdt, x_pos, y_pos);
+    printf(format, step, time_val, dt_control, dt, jdt, kdt, x_pos, y_pos);
   }
 
   if (small == 1)
