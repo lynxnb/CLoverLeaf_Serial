@@ -23,37 +23,12 @@
  *  factor is used to ensure numerical stability.
  */
 
-#include "../data.h"
 #include "ftocmacros.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-void calc_dt(int tile, double local_dt, char local_control[static 8], double xl_pos, double yl_pos, int jldt,
-             int kldt) {
-  int small = 0, l_control;
-  local_dt = G_BIG;
-
-  // calc_dt_impl();
-
-  switch (l_control) {
-  case 1:
-    strcpy(local_control, "sound");
-    break;
-  case 2:
-    strcpy(local_control, "xvel");
-    break;
-  case 3:
-    strcpy(local_control, "yvel");
-    break;
-  case 4:
-    strcpy(local_control, "div");
-    break;
-  }
-}
-
-void calc_dt_impl(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, double *gbig, double *mindt,
+void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, double *gbig, double *mindt,
                   double *dtcsafe, double *dtusafe, double *dtvsafe, double *dtdivsafe, double *xarea, double *yarea,
                   double *cellx, double *celly, double *celldx, double *celldy, double *volume, double *density0,
                   double *energy0, double *pressure, double *viscosity, double *soundspeed, double *xvel0,

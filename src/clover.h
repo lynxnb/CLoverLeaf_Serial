@@ -17,4 +17,6 @@ extern void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells);
 
 extern void clover_allocate_buffers();
 
+extern void clover_deallocate_buffers();
+
 extern void clover_min(double dt);

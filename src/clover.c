@@ -243,7 +243,36 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells) {
 }
 
 void clover_allocate_buffers() {
-  // TODO
+  // Unallocated buffers for external boundaries caused issues on some systems so they are now all allocated
+  if (parallel.task == chunk.task) {
+    chunk.left_snd_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
+    chunk.left_rcv_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
+    
+    chunk.right_snd_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
+    chunk.right_rcv_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
+
+    chunk.bottom_snd_buffer = malloc(10 * 2 * (chunk.x_max + 5) * sizeof(double));
+    chunk.bottom_rcv_buffer = malloc(10 * 2 * (chunk.x_max + 5) * sizeof(double));
+
+    chunk.top_snd_buffer = malloc(10 * 2 * (chunk.x_max + 5) * sizeof(double));
+    chunk.top_rcv_buffer = malloc(10 * 2 * (chunk.x_max + 5) * sizeof(double));
+  }
+}
+
+void clover_deallocate_buffers() {
+  if (parallel.task == chunk.task) {
+    free(chunk.left_snd_buffer);
+    free(chunk.left_rcv_buffer);
+    
+    free(chunk.right_snd_buffer);
+    free(chunk.right_rcv_buffer);
+
+    free(chunk.bottom_snd_buffer);
+    free(chunk.bottom_rcv_buffer);
+
+    free(chunk.top_snd_buffer);
+    free(chunk.top_rcv_buffer);
+  }
 }
 
 void clover_min(double dt) {

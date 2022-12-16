@@ -44,48 +44,48 @@ typedef struct profiler_type_t {
 } profiler_type;
 
 typedef struct field_type_t {
-  double *density0;
-  double *density1;
-  double *energy0;
-  double *energy1;
-  double *pressure;
-  double *viscosity;
-  double *soundspeed;
-  double *xvel0;
-  double *xvel1;
-  double *yvel0;
-  double *yvel1;
-  double *vol_flux_x;
-  double *mass_flux_x;
-  double *vol_flux_y;
-  double *mass_flux_y;
-  double *work_array1; // node_flux, stepbymass, volume_change, pre_vol
-  double *work_array2; // node_mass_post, post_vol
-  double *work_array3; // node_mass_pre,pre_mass
-  double *work_array4; // advec_vel, post_mass 
-  double *work_array5; // mom_flux, advec_vol 
-  double *work_array6; // pre_vol, post_ener
-  double *work_array7; // post_vol, ener_flux
+  double *density0;    // 2D array
+  double *density1;    // 2D array
+  double *energy0;     // 2D array
+  double *energy1;     // 2D array
+  double *pressure;    // 2D array
+  double *viscosity;   // 2D array
+  double *soundspeed;  // 2D array
+  double *xvel0;       // 2D array
+  double *xvel1;       // 2D array
+  double *yvel0;       // 2D array
+  double *yvel1;       // 2D array
+  double *vol_flux_x;  // 2D array
+  double *mass_flux_x; // 2D array
+  double *vol_flux_y;  // 2D array
+  double *mass_flux_y; // 2D array
+  double *work_array1; // 2D array | node_flux, stepbymass, volume_change, pre_vol
+  double *work_array2; // 2D array | node_mass_post, post_vol
+  double *work_array3; // 2D array | node_mass_pre, pre_mass
+  double *work_array4; // 2D array | advec_vel, post_mass
+  double *work_array5; // 2D array | mom_flux, advec_vol
+  double *work_array6; // 2D array | pre_vol, post_ener
+  double *work_array7; // 2D array | post_vol, ener_flux
 
-  double *cellx;
-  double *celly;
-  double *vertexx;
-  double *vertexy;
-  double *celldx;
-  double *celldy;
-  double *vertexdx;
-  double *vertexdy;
+  double *cellx;    // 1D array
+  double *celly;    // 1D array
+  double *vertexx;  // 1D array
+  double *vertexy;  // 1D array
+  double *celldx;   // 1D array
+  double *celldy;   // 1D array
+  double *vertexdx; // 1D array
+  double *vertexdy; // 1D array
 
-  double *volume;
-  double *xarea;
-  double *yarea;
+  double *volume; // 2D array
+  double *xarea;  // 2D array
+  double *yarea;  // 2D array
 } field_type;
 
 typedef struct tile_type_t {
   field_type field;
   int tile_neighbours[4];
   int external_tile_mask[4];
-  
+
   int t_xmin;
   int t_xmax;
   int t_ymin;
@@ -101,17 +101,17 @@ typedef struct chunk_type_t {
   int task;
   int chunk_neighbours[4];
 
-  double *left_rcv_buffer;
-  double *right_rcv_buffer;
-  double *bottom_rcv_buffer;
-  double *top_rcv_buffer;
+  double *left_rcv_buffer;   // 1D array
+  double *right_rcv_buffer;  // 1D array
+  double *bottom_rcv_buffer; // 1D array
+  double *top_rcv_buffer;    // 1D array
 
-  double *left_snd_buffer;
-  double *right_snd_buffer;
-  double *bottom_snd_buffer;
-  double *top_snd_buffer;
+  double *left_snd_buffer;   // 1D array
+  double *right_snd_buffer;  // 1D array
+  double *bottom_snd_buffer; // 1D array
+  double *top_snd_buffer;    // 1D array
 
-  tile_type *tiles; // allocatable
+  tile_type *tiles; // 1D array
 
   int x_min;
   int y_min;

@@ -29,23 +29,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ideal_gas(tile_type *cur_tile, bool predict) {
-  int x_min = cur_tile->t_xmin;
-  int x_max = cur_tile->t_xmax;
-  int y_min = cur_tile->t_ymin;
-  int y_max = cur_tile->t_ymax;
+void kernel_ideal_gas(tile_type *tile, bool predict) {
+  int x_min = tile->t_xmin;
+  int x_max = tile->t_xmax;
+  int y_min = tile->t_ymin;
+  int y_max = tile->t_ymax;
   double *density, *energy;
 
   if (predict) {
-    density = cur_tile->field.density1;
-    energy = cur_tile->field.energy1;
+    density = tile->field.density1;
+    energy = tile->field.energy1;
   } else {
-    density = cur_tile->field.density0;
-    energy = cur_tile->field.energy0;
+    density = tile->field.density0;
+    energy = tile->field.energy0;
   }
 
-  double *pressure = cur_tile->field.pressure;
-  double *soundspeed = cur_tile->field.soundspeed;
+  double *pressure = tile->field.pressure;
+  double *soundspeed = tile->field.soundspeed;
 
   int j, k;
   double sound_speed_squared, v, pressurebyenergy, pressurebyvolume;

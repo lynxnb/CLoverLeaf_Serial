@@ -4,7 +4,7 @@
 #include "clover.h"
 #include "data.h"
 #include "definitions.h"
-#include "kernels/kernels.h"
+#include "kernels.h"
 #include "report.h"
 #include "utils/math.h"
 #include "utils/timer.h"
@@ -123,7 +123,7 @@ void timestep() {
     kernel_time = timer();
 
   for (tile = 0; tile < tiles_per_chunk; tile++) {
-    ideal_gas(&chunk.tiles[tile], false);
+    ideal_gas(tile, false);
   }
 
   if (profiler_on)
@@ -153,7 +153,7 @@ void timestep() {
     kernel_time = timer();
 
   for (tile = 0; tile < tiles_per_chunk; tile++) {
-    //calc_dt(tile, dtlp, dtl_control, xl_pos, yl_pos, jldt, kldt);
+    // calc_dt(tile, dtlp, dtl_control, xl_pos, yl_pos, jldt, kldt);
 
     if (dtlp < dt) {
       dt = dtlp;
@@ -167,7 +167,7 @@ void timestep() {
 
   dt = min(dt, min((dtold * dtrise), dtmax));
 
-  // clover_min(dt)
+  clover_min(dt);
   if (profiler_on)
     profiler.timestep += timer() - kernel_time;
 
