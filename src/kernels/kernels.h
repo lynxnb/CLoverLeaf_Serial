@@ -7,7 +7,9 @@
 
 extern void kernel_initialise_chunk(tile_type *tile, double xmin, double ymin, double dx, double dy);
 
-extern void kernel_generate_chunk(tile_type *tile);
+extern void kernel_generate_chunk(tile_type *tile, int number_of_states, double *state_density, double *state_energy,
+                                  double *state_xvel, double *state_yvel, double *state_xmin, double *state_xmax,
+                                  double *state_ymin, double *state_ymax, double *state_radius, int *state_geometry);
 
 extern void kernel_ideal_gas(tile_type *tile, bool predict);
 

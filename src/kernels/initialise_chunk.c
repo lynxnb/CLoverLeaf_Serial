@@ -22,9 +22,8 @@
  */
 
 #include "../types/definitions.h"
+#include "../utils/array_indexing.h"
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 void kernel_initialise_chunk(tile_type *tile, double xmin, double ymin, double dx, double dy) {
   int x_min = tile->t_xmin;
@@ -91,7 +90,7 @@ void kernel_initialise_chunk(tile_type *tile, double xmin, double ymin, double d
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      volume[k * row_size + j] = dx * dy;
+      volume[INDEX2D(k, j, row_size)] = dx * dy;
     }
   }
 
@@ -99,7 +98,7 @@ void kernel_initialise_chunk(tile_type *tile, double xmin, double ymin, double d
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      xarea[k * row_size + j] = celldy[k];
+      xarea[INDEX2D(k, j, row_size)] = celldy[k];
     }
   }
 
@@ -107,7 +106,7 @@ void kernel_initialise_chunk(tile_type *tile, double xmin, double ymin, double d
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      yarea[k * row_size + j] = celldx[j];
+      yarea[INDEX2D(k, j, row_size)] = celldx[j];
     }
   }
 }

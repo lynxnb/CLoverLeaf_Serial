@@ -4,10 +4,9 @@
 #include "clover.h"
 #include "data.h"
 #include "definitions.h"
-#include "kernels/kernels.h"
+#include "kernels.h"
 #include "parse.h"
 #include "report.h"
-#include "types/definitions.h"
 #include "utils/math.h"
 #include "utils/string.h"
 #include <errno.h>
@@ -447,7 +446,7 @@ void read_input() {
   // modification to the state extents does not change the answers.
   dx = (grid.xmax - grid.xmin) / (float)grid.x_cells;
   dy = (grid.ymax - grid.ymin) / (float)grid.y_cells;
-  for (int i = 2; i < number_of_states; i++) {
+  for (int i = 1; i < number_of_states; i++) {
     states[i].xmin = states[i].xmin + (dx / 100.0);
     states[i].ymin = states[i].ymin + (dy / 100.0);
     states[i].xmax = states[i].xmax - (dx / 100.0);
@@ -515,7 +514,7 @@ void start() {
 
   for (int tile = 0; tile < tiles_per_chunk; tile++) {
     initialise_chunk(tile);
-    // generate_chunk(tile);
+    generate_chunk(tile);
   }
 
   advect_x = true;
@@ -526,7 +525,7 @@ void start() {
   profiler_on = false;
 
   for (int tile = 0; tile < tiles_per_chunk; tile++)
-    ideal_gas(&chunk.tiles[tile], false);
+    ideal_gas(tile, false);
 
   memset(fields, 0, sizeof(fields));
   fields[FIELD_DENSITY0] = 1;

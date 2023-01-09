@@ -21,7 +21,26 @@ void initialise_chunk(int tile) {
 void generate_chunk(int tile) {
   tile_type *tile_ptr = &chunk.tiles[tile];
 
-  kernel_generate_chunk(tile_ptr);
+  double state_density[number_of_states], state_energy[number_of_states], state_xvel[number_of_states],
+      state_yvel[number_of_states], state_xmin[number_of_states], state_xmax[number_of_states],
+      state_ymin[number_of_states], state_ymax[number_of_states], state_radius[number_of_states];
+  int state_geometry[number_of_states];
+
+  for (int state = 0; state <= number_of_states; state++) {
+    state_density[state] = states[state].density;
+    state_energy[state] = states[state].energy;
+    state_xvel[state] = states[state].xvel;
+    state_yvel[state] = states[state].yvel;
+    state_xmin[state] = states[state].xmin;
+    state_xmax[state] = states[state].xmax;
+    state_ymin[state] = states[state].ymin;
+    state_ymax[state] = states[state].ymax;
+    state_radius[state] = states[state].radius;
+    state_geometry[state] = states[state].geometry;
+  }
+
+  kernel_generate_chunk(tile_ptr, number_of_states, state_density, state_energy, state_xvel, state_yvel, state_xmin,
+                        state_xmax, state_ymin, state_ymax, state_radius, state_geometry);
 }
 
 void ideal_gas(int tile, bool predict) {
