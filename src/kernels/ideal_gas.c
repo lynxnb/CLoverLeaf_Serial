@@ -22,31 +22,13 @@
  *  the ideal gas equation of state, with a fixed gamma of 1.4.
  */
 
-#include "../types/definitions.h"
-#include "ftocmacros.h"
 #include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-void kernel_ideal_gas(tile_type *tile, bool predict) {
-  int x_min = tile->t_xmin;
-  int x_max = tile->t_xmax;
-  int y_min = tile->t_ymin;
-  int y_max = tile->t_ymax;
-  double *density, *energy;
+#include "ftocmacros.h"
 
-  if (predict) {
-    density = tile->field.density1;
-    energy = tile->field.energy1;
-  } else {
-    density = tile->field.density0;
-    energy = tile->field.energy0;
-  }
-
-  double *pressure = tile->field.pressure;
-  double *soundspeed = tile->field.soundspeed;
-
+void kernel_ideal_gas(
+    int x_min, int x_max, int y_min, int y_max, double *density, double *energy, double *pressure, double *soundspeed
+) {
   int j, k;
   double sound_speed_squared, v, pressurebyenergy, pressurebyvolume;
 

@@ -3,12 +3,43 @@
 
 #pragma once
 
-#include "../types/definitions.h"
+#include <stdbool.h>
 
-extern void kernel_initialise_chunk(tile_type *tile, double xmin, double ymin, double dx, double dy);
+extern void kernel_initialise_chunk(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double min_x,
+    double min_y,
+    double d_x,
+    double d_y,
+    double *vertexx,
+    double *vertexdx,
+    double *vertexy,
+    double *vertexdy,
+    double *cellx,
+    double *celldx,
+    double *celly,
+    double *celldy,
+    double *volume,
+    double *xarea,
+    double *yarea
+);
 
 extern void kernel_generate_chunk(
-    tile_type *tile,
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double *vertexx,
+    double *vertexy,
+    double *cellx,
+    double *celly,
+    double *density0,
+    double *energy0,
+    double *xvel0,
+    double *yvel0,
     int number_of_states,
     double *state_density,
     double *state_energy,
@@ -22,7 +53,9 @@ extern void kernel_generate_chunk(
     int *state_geometry
 );
 
-extern void kernel_ideal_gas(tile_type *tile, bool predict);
+extern void kernel_ideal_gas(
+    int x_min, int x_max, int y_min, int y_max, double *density, double *energy, double *pressure, double *soundspeed
+);
 
 extern void kernel_update_tile_halo();
 
@@ -71,5 +104,35 @@ extern void kernel_field_summary(
 );
 
 extern void kernel_calc_dt(
-    tile_type *tile, double local_dt, char local_control[static 8], double xl_pos, double yl_pos, int jldt, int kldt
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double min_dt,
+    double dtc_safe,
+    double dtu_safe,
+    double dtv_safe,
+    double dtdiv_safe,
+    double *xarea,
+    double *yarea,
+    double *cellx,
+    double *celly,
+    double *celldx,
+    double *celldy,
+    double *volume,
+    double *density0,
+    double *energy0,
+    double *pressure,
+    double *viscosity,
+    double *soundspeed,
+    double *xvel0,
+    double *yvel0,
+    double *dt_min,
+    double *dtminval,
+    int *dtlcontrol,
+    double *xlpos,
+    double *ylpos,
+    int *jldt,
+    int *kldt,
+    int *smll
 );

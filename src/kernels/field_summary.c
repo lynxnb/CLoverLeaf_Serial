@@ -22,8 +22,6 @@
  *  pressure for the chunk is calculated.
  */
 
-#include <math.h>
-
 #include "ftocmacros.h"
 
 void kernel_field_summary(

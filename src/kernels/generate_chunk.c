@@ -25,28 +25,36 @@
  *  overwritten by further state definitions.
  */
 
-#include "../types/data.h"
-#include "../types/definitions.h"
-#include "../utils/array_indexing.h"
 #include <math.h>
 
-void kernel_generate_chunk(tile_type *tile, int number_of_states, double *state_density, double *state_energy,
-                           double *state_xvel, double *state_yvel, double *state_xmin, double *state_xmax,
-                           double *state_ymin, double *state_ymax, double *state_radius, int *state_geometry) {
-  int x_min = tile->t_xmin;
-  int x_max = tile->t_xmax;
-  int y_min = tile->t_ymin;
-  int y_max = tile->t_ymax;
+#include "../types/data.h"
+#include "ftocmacros.h"
 
-  double *vertexx = tile->field.vertexx;
-  double *vertexy = tile->field.vertexy;
-  double *cellx = tile->field.cellx;
-  double *celly = tile->field.celly;
-  double *density0 = tile->field.density0;
-  double *energy0 = tile->field.energy0;
-  double *xvel0 = tile->field.xvel0;
-  double *yvel0 = tile->field.yvel0;
-
+void kernel_generate_chunk(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double *vertexx,
+    double *vertexy,
+    double *cellx,
+    double *celly,
+    double *density0,
+    double *energy0,
+    double *xvel0,
+    double *yvel0,
+    int number_of_states,
+    double *state_density,
+    double *state_energy,
+    double *state_xvel,
+    double *state_yvel,
+    double *state_xmin,
+    double *state_xmax,
+    double *state_ymin,
+    double *state_ymax,
+    double *state_radius,
+    int *state_geometry
+) {
   double radius, x_cent, y_cent;
   int state;
 
@@ -54,69 +62,81 @@ void kernel_generate_chunk(tile_type *tile, int number_of_states, double *state_
 
   /* State 1 is always the background state */
 
-  int row_size = (y_max + 2) - (y_min - 2) + 1;
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      energy0[INDEX2D(k, j, row_size)] = state_energy[0];
+      energy0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_energy[FTNREF1D(1, 1)];
     }
   }
 
-  // row size unchanged
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      density0[INDEX2D(k, j, row_size)] = state_density[0];
+      density0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_density[FTNREF1D(1, 1)];
     }
   }
 
-  row_size = (y_max + 3) - (y_min - 2) + 1;
-  for (k = y_min - 2; k <= y_max + 3; k++) {
+  for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
-    for (j = x_min - 2; j <= x_max + 3; j++) {
-      xvel0[INDEX2D(k, j, row_size)] = state_xvel[0];
+    for (j = x_min - 2; j <= x_max + 2; j++) {
+      xvel0[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] = state_xvel[FTNREF1D(1, 1)];
     }
   }
 
-  // row size unchanged
-  for (k = y_min - 2; k <= y_max + 3; k++) {
+  for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
-    for (j = x_min - 2; j <= x_max + 3; j++) {
-      yvel0[INDEX2D(k, j, row_size)] = state_yvel[0];
+    for (j = x_min - 2; j <= x_max + 2; j++) {
+      yvel0[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] = state_yvel[FTNREF1D(1, 1)];
     }
   }
 
-  int row_size_outer = (y_max + 2) - (y_min - 2) + 1; // energy0, density0
-  int row_size_inner = (y_max + 3) - (y_min - 2) + 1; // xvel0, yvel0
-  for (state = 1; state <= number_of_states; state++) {
-
+  for (state = 2; state <= number_of_states; state++) {
     /* Could the velocity setting be thread unsafe? */
-    x_cent = state_xmin[state];
-    y_cent = state_ymin[state];
+    x_cent = state_xmin[FTNREF1D(state, 1)];
+    y_cent = state_ymin[FTNREF1D(state, 1)];
 
     for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
       for (j = x_min - 2; j <= x_max + 2; j++) {
-        bool geometry_condition = false;
-
-        if (state_geometry[state] == G_RECT) {
-          geometry_condition = (vertexx[j + 1] >= state_xmin[state] && vertexx[j] < state_xmax[state]) &&
-                               (vertexy[k + 1] >= state_ymin[state] && vertexy[k] < state_ymax[state]);
-        } else if (state_geometry[state] == G_CIRC) {
-          radius = sqrt((cellx[j] - x_cent) * (cellx[j] - x_cent) + (celly[k] - y_cent) * (celly[j] - y_cent));
-          geometry_condition = radius <= state_radius[state];
-        } else if (state_geometry[state] == G_POINT) {
-          geometry_condition = (vertexx[j] == x_cent && vertexy[j] == y_cent);
-        }
-
-        if (geometry_condition) {
-          energy0[INDEX2D(k, j, row_size_outer)] = state_energy[state];
-          density0[INDEX2D(k, j, row_size_outer)] = state_density[state];
-
-          for (kt = k; kt <= k + 1; kt++) {
-            for (jt = j; jt <= j + 1; jt++) {
-              xvel0[INDEX2D(k, j, row_size_inner)] = state_xvel[state];
-              yvel0[INDEX2D(k, j, row_size_inner)] = state_yvel[state];
+        if (state_geometry[FTNREF1D(state, 1)] == G_RECT) {
+          if (vertexx[FTNREF1D(j + 1, x_min - 2)] >= state_xmin[FTNREF1D(state, 1)] &&
+              vertexx[FTNREF1D(j, x_min - 2)] < state_xmax[FTNREF1D(state, 1)]) {
+            if (vertexy[FTNREF1D(k + 1, y_min - 2)] >= state_ymin[FTNREF1D(state, 1)] &&
+                vertexy[FTNREF1D(k, y_min - 2)] < state_ymax[FTNREF1D(state, 1)]) {
+              density0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_density[FTNREF1D(state, 1)];
+              energy0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_energy[FTNREF1D(state, 1)];
+              for (kt = k; kt <= k + 1; kt++) {
+                for (jt = j; jt <= j + 1; jt++) {
+                  xvel0[FTNREF2D(jt, kt, x_max + 5, x_min - 2, y_min - 2)] = state_xvel[FTNREF1D(state, 1)];
+                  yvel0[FTNREF2D(jt, kt, x_max + 5, x_min - 2, y_min - 2)] = state_yvel[FTNREF1D(state, 1)];
+                }
+              }
+            }
+          }
+        } else if (state_geometry[FTNREF1D(state, 1)] == G_CIRC) {
+          radius = sqrt(
+              (cellx[FTNREF1D(j, x_min - 2)] - x_cent) * (cellx[FTNREF1D(j, x_min - 2)] - x_cent) +
+              (celly[FTNREF1D(k, y_min - 2)] - y_cent) * (celly[FTNREF1D(k, y_min - 2)] - y_cent)
+          );
+          if (radius <= state_radius[FTNREF1D(state, 1)]) {
+            density0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_density[FTNREF1D(state, 1)];
+            energy0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_density[FTNREF1D(state, 1)];
+            for (kt = k; kt <= k + 1; kt++) {
+              for (jt = j; jt <= j + 1; jt++) {
+                xvel0[FTNREF2D(jt, kt, x_max + 5, x_min - 2, y_min - 2)] = state_xvel[FTNREF1D(state, 1)];
+                yvel0[FTNREF2D(jt, kt, x_max + 5, x_min - 2, y_min - 2)] = state_yvel[FTNREF1D(state, 1)];
+              }
+            }
+          }
+        } else if (state_geometry[FTNREF1D(state, 1)] == G_POINT) {
+          if (vertexx[FTNREF1D(j, x_min - 2)] == x_cent && vertexy[FTNREF1D(j, x_min - 2)] == y_cent) {
+            density0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_density[FTNREF1D(state, 1)];
+            energy0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = state_density[FTNREF1D(state, 1)];
+            for (kt = k; kt <= k + 1; kt++) {
+              for (jt = j; jt <= j + 1; jt++) {
+                xvel0[FTNREF2D(jt, kt, x_max + 5, x_min - 2, y_min - 2)] = state_xvel[FTNREF1D(state, 1)];
+                yvel0[FTNREF2D(jt, kt, x_max + 5, x_min - 2, y_min - 2)] = state_yvel[FTNREF1D(state, 1)];
+              }
             }
           }
         }

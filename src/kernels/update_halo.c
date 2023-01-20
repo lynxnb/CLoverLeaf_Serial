@@ -24,8 +24,6 @@
  *  reflective.
  */
 
-#include <math.h>
-
 #include "../types/data.h"
 #include "ftocmacros.h"
 

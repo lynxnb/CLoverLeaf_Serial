@@ -21,92 +21,89 @@
  *  @details Invokes the user specified chunk initialisation kernel.
  */
 
-#include "../types/definitions.h"
-#include "../utils/array_indexing.h"
-#include <math.h>
+#include "ftocmacros.h"
 
-void kernel_initialise_chunk(tile_type *tile, double xmin, double ymin, double dx, double dy) {
-  int x_min = tile->t_xmin;
-  int x_max = tile->t_xmax;
-  int y_min = tile->t_ymin;
-  int y_max = tile->t_ymax;
-
-  double *cellx = tile->field.cellx;
-  double *celly = tile->field.celly;
-  double *vertexx = tile->field.vertexx;
-  double *vertexy = tile->field.vertexy;
-  double *celldx = tile->field.celldx;
-  double *celldy = tile->field.celldy;
-  double *vertexdx = tile->field.vertexdx;
-  double *vertexdy = tile->field.vertexdy;
-
-  double *volume = tile->field.volume;
-  double *xarea = tile->field.xarea;
-  double *yarea = tile->field.yarea;
-
+void kernel_initialise_chunk(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double min_x,
+    double min_y,
+    double d_x,
+    double d_y,
+    double *vertexx,
+    double *vertexdx,
+    double *vertexy,
+    double *vertexdy,
+    double *cellx,
+    double *celldx,
+    double *celly,
+    double *celldy,
+    double *volume,
+    double *xarea,
+    double *yarea
+) {
   int j, k;
 
 #pragma ivdep
-  for (j = 0; j <= (x_max + 3) + abs(x_min - 2); j++) {
-    vertexx[j] = xmin + dx * (double)(j - x_min);
+  for (j = x_min - 2; j <= x_max + 3; j++) {
+    vertexx[FTNREF1D(j, x_min - 2)] = min_x + d_x * (double)(j - x_min);
   }
 
 #pragma ivdep
   for (j = x_min - 2; j <= x_max + 3; j++) {
-    vertexdx[j] = dx;
+    vertexdx[FTNREF1D(j, x_min - 2)] = d_x;
   }
 
 #pragma ivdep
   for (k = y_min - 2; k <= y_max + 3; k++) {
-    vertexy[j] = ymin + dy * (double)(k - y_min);
+    vertexy[FTNREF1D(k, y_min - 2)] = min_y + d_y * (double)(k - y_min);
   }
 
 #pragma ivdep
   for (k = y_min - 2; k <= y_max + 3; k++) {
-    vertexdy[j] = dy;
+    vertexdy[FTNREF1D(k, y_min - 2)] = d_y;
   }
 
 #pragma ivdep
   for (j = x_min - 2; j <= x_max + 2; j++) {
-    cellx[j] = 0.5 * (vertexx[j] + vertexx[j + 1]);
+    cellx[FTNREF1D(j, x_min - 2)] = 0.5 * (vertexx[FTNREF1D(j, x_min - 2)] + vertexx[FTNREF1D(j + 1, x_min - 2)]);
   }
 
 #pragma ivdep
   for (j = x_min - 2; j <= x_max + 2; j++) {
-    celldx[j] = dx;
+    celldx[FTNREF1D(j, x_min - 2)] = d_x;
   }
 
 #pragma ivdep
   for (k = y_min - 2; k <= y_max + 2; k++) {
-    celly[k] = 0.5 * (vertexy[k] + vertexy[k + 1]);
+    celly[FTNREF1D(k, y_min - 2)] = 0.5 * (vertexy[FTNREF1D(k, y_min - 2)] + vertexy[FTNREF1D(k + 1, x_min - 2)]);
   }
 
 #pragma ivdep
   for (k = y_min - 2; k <= y_max + 2; k++) {
-    celldy[k] = dy;
+    celldy[FTNREF1D(k, y_min - 2)] = d_y;
   }
 
-  int row_size = (y_max + 2) - (y_min - 2) + 1;
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      volume[INDEX2D(k, j, row_size)] = dx * dy;
+      volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = d_x * d_y;
     }
   }
 
-  // row_size unchanged
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      xarea[INDEX2D(k, j, row_size)] = celldy[k];
+      xarea[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] = celldy[FTNREF1D(k, y_min - 2)];
     }
   }
 
-  // row_size unchanged
   for (k = y_min - 2; k <= y_max + 2; k++) {
 #pragma ivdep
     for (j = x_min - 2; j <= x_max + 2; j++) {
-      yarea[INDEX2D(k, j, row_size)] = celldx[j];
+      yarea[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] = celldx[FTNREF1D(j, x_min - 2)];
     }
   }
 }

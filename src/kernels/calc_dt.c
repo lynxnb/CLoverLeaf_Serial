@@ -23,32 +23,46 @@
  *  factor is used to ensure numerical stability.
  */
 
-#include "ftocmacros.h"
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 
-void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, double *gbig, double *mindt,
-                  double *dtcsafe, double *dtusafe, double *dtvsafe, double *dtdivsafe, double *xarea, double *yarea,
-                  double *cellx, double *celly, double *celldx, double *celldy, double *volume, double *density0,
-                  double *energy0, double *pressure, double *viscosity, double *soundspeed, double *xvel0,
-                  double *yvel0, double *dt_min, double *dtminval, int *dtlcontrol, double *xlpos, double *ylpos,
-                  int *jldt, int *kldt, int *smll) {
+#include "../types/data.h"
+#include "ftocmacros.h"
 
-  int x_min = *xmin;
-  int x_max = *xmax;
-  int y_min = *ymin;
-  int y_max = *ymax;
-
-  double g_small = *gsmall;
-  double g_big = *gbig;
+void kernel_calc_dt(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double min_dt,
+    double dtc_safe,
+    double dtu_safe,
+    double dtv_safe,
+    double dtdiv_safe,
+    double *xarea,
+    double *yarea,
+    double *cellx,
+    double *celly,
+    double *celldx,
+    double *celldy,
+    double *volume,
+    double *density0,
+    double *energy0,
+    double *pressure,
+    double *viscosity,
+    double *soundspeed,
+    double *xvel0,
+    double *yvel0,
+    double *dt_min,
+    double *dtminval,
+    int *dtlcontrol,
+    double *xlpos,
+    double *ylpos,
+    int *jldt,
+    int *kldt,
+    int *smll
+) {
   double dt_min_val = *dtminval;
-  double dtc_safe = *dtcsafe;
-  double dtu_safe = *dtusafe;
-  double dtv_safe = *dtvsafe;
-  double dtdiv_safe = *dtdivsafe;
-  double min_dt = *mindt;
-
   int dtl_control = *dtlcontrol;
   double xl_pos = *xlpos;
   double yl_pos = *ylpos;
@@ -62,13 +76,12 @@ void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, 
 
   small = 0;
 
-  dt_min_val = g_big;
+  dt_min_val = G_BIG;
   jk_control = 1.1;
 
   for (k = y_min; k <= y_max; k++) {
 #pragma ivdep
     for (j = x_min; j <= x_max; j++) {
-
       dsx = celldx[FTNREF1D(j, x_min - 2)];
       dsy = celldy[FTNREF1D(k, y_min - 2)];
 
@@ -76,7 +89,7 @@ void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, 
            soundspeed[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)];
       cc = cc + 2.0 * viscosity[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] /
                     density0[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)];
-      cc = MAX(sqrt(cc), g_small);
+      cc = MAX(sqrt(cc), G_SMALL);
 
       dtct = dtc_safe * MIN(dsx, dsy) / cc;
 
@@ -92,7 +105,7 @@ void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, 
       div = div + dv2 - dv1;
 
       dtut = dtu_safe * 2.0 * volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] /
-             MAX(fabs(dv1), MAX(fabs(dv2), g_small * volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)]));
+             MAX(fabs(dv1), MAX(fabs(dv2), G_SMALL * volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)]));
 
       dv1 = (yvel0[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] +
              yvel0[FTNREF2D(j + 1, k, x_max + 5, x_min - 2, y_min - 2)]) *
@@ -104,14 +117,14 @@ void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, 
       div = div + dv2 - dv1;
 
       dtvt = dtv_safe * 2.0 * volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] /
-             MAX(fabs(dv1), MAX(fabs(dv2), g_small * volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)]));
+             MAX(fabs(dv1), MAX(fabs(dv2), G_SMALL * volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)]));
 
       div = div / (2.0 * volume[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)]);
 
-      if (div < -g_small) {
+      if (div < -G_SMALL) {
         dtdivt = dtdiv_safe * (-1.0 / div);
       } else {
-        dtdivt = g_big;
+        dtdivt = G_BIG;
       }
 
       dt_min[FTNREF2D(j, k, x_max + 5, x_min - 2, y_min - 2)] = MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt)));
@@ -129,8 +142,8 @@ void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, 
   // Extract the mimimum timestep information
   dtl_control = 10.01 * (jk_control - (int)(jk_control));
   jk_control = jk_control - (jk_control - (int)(jk_control));
-  j_ldt = 1; // MOD(INT(jk_control),x_max)
-  k_ldt = 1; // 1+(jk_control/x_max)
+  j_ldt = 1;  // MOD(INT(jk_control),x_max)
+  k_ldt = 1;  // 1+(jk_control/x_max)
   // xl_pos=cellx[FTNREF1D(j_ldt,xmin-2)];
   // yl_pos=celly[FTNREF1D(j_ldt,ymin-2)];
 
@@ -150,18 +163,33 @@ void kernel_calc_dt(int *xmin, int *xmax, int *ymin, int *ymax, double *gsmall, 
     printf("x, y                 :%f %f \n", xl_pos, yl_pos);
     printf("timestep : %f\n", dt_min_val);
     printf("Cell velocities;\n");
-    printf("%f %f \n", xvel0[FTNREF2D(j_ldt, k_ldt, x_max + 5, x_min - 2, y_min - 2)],
-           yvel0[FTNREF2D(j_ldt, k_ldt, x_max + 5, x_min - 2, y_min - 2)]);
-    printf("%f %f \n", xvel0[FTNREF2D(j_ldt + 1, k_ldt, x_max + 5, x_min - 2, y_min - 2)],
-           yvel0[FTNREF2D(j_ldt + 1, k_ldt, x_max + 5, x_min - 2, y_min - 2)]);
-    printf("%f %f \n", xvel0[FTNREF2D(j_ldt + 1, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)],
-           yvel0[FTNREF2D(j_ldt + 1, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)]);
-    printf("%f %f \n", xvel0[FTNREF2D(j_ldt, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)],
-           yvel0[FTNREF2D(j_ldt, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)]);
+    printf(
+        "%f %f \n",
+        xvel0[FTNREF2D(j_ldt, k_ldt, x_max + 5, x_min - 2, y_min - 2)],
+        yvel0[FTNREF2D(j_ldt, k_ldt, x_max + 5, x_min - 2, y_min - 2)]
+    );
+    printf(
+        "%f %f \n",
+        xvel0[FTNREF2D(j_ldt + 1, k_ldt, x_max + 5, x_min - 2, y_min - 2)],
+        yvel0[FTNREF2D(j_ldt + 1, k_ldt, x_max + 5, x_min - 2, y_min - 2)]
+    );
+    printf(
+        "%f %f \n",
+        xvel0[FTNREF2D(j_ldt + 1, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)],
+        yvel0[FTNREF2D(j_ldt + 1, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)]
+    );
+    printf(
+        "%f %f \n",
+        xvel0[FTNREF2D(j_ldt, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)],
+        yvel0[FTNREF2D(j_ldt, k_ldt + 1, x_max + 5, x_min - 2, y_min - 2)]
+    );
     printf("density, energy, pressure, soundspeed \n");
-    printf("%f %f %f %f \n", density0[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)],
-           energy0[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)],
-           pressure[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)],
-           soundspeed[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)]);
+    printf(
+        "%f %f %f %f \n",
+        density0[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)],
+        energy0[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)],
+        pressure[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)],
+        soundspeed[FTNREF2D(j_ldt, k_ldt, x_max + 4, x_min - 2, y_min - 2)]
+    );
   }
 }

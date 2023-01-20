@@ -12,13 +12,7 @@
 #include "definitions.h"
 #include "utils/timer.h"
 
-#ifdef NO_INLINE_KERNELS
-#define KERNEL_DECL
-#else
-#define KERNEL_DECL extern inline
-#endif
-
-KERNEL_DECL void initialise_chunk(int tile) {
+void initialise_chunk(int tile) {
   tile_type *tile_ptr = &chunk.tiles[tile];
 
   double dx = grid.xmax - grid.xmin / (double)grid.x_cells;
@@ -27,15 +21,41 @@ KERNEL_DECL void initialise_chunk(int tile) {
   double xmin = grid.xmin + dx * (double)(tile_ptr->t_left - 1);
   double ymin = grid.ymin + dy * (double)(tile_ptr->t_bottom - 1);
 
-  kernel_initialise_chunk(tile_ptr, xmin, ymin, dx, dy);
+  kernel_initialise_chunk(
+      tile_ptr->t_xmin,
+      tile_ptr->t_xmax,
+      tile_ptr->t_ymin,
+      tile_ptr->t_ymax,
+      xmin,
+      ymin,
+      dx,
+      dy,
+      tile_ptr->field.vertexx,
+      tile_ptr->field.vertexdx,
+      tile_ptr->field.vertexy,
+      tile_ptr->field.vertexdy,
+      tile_ptr->field.cellx,
+      tile_ptr->field.celldx,
+      tile_ptr->field.celly,
+      tile_ptr->field.celldy,
+      tile_ptr->field.volume,
+      tile_ptr->field.xarea,
+      tile_ptr->field.yarea
+  );
 }
 
-KERNEL_DECL void generate_chunk(int tile) {
+void generate_chunk(int tile) {
   tile_type *tile_ptr = &chunk.tiles[tile];
 
-  double state_density[number_of_states], state_energy[number_of_states], state_xvel[number_of_states],
-      state_yvel[number_of_states], state_xmin[number_of_states], state_xmax[number_of_states],
-      state_ymin[number_of_states], state_ymax[number_of_states], state_radius[number_of_states];
+  double state_density[number_of_states];
+  double state_energy[number_of_states];
+  double state_xvel[number_of_states];
+  double state_yvel[number_of_states];
+  double state_xmin[number_of_states];
+  double state_xmax[number_of_states];
+  double state_ymin[number_of_states];
+  double state_ymax[number_of_states];
+  double state_radius[number_of_states];
   int state_geometry[number_of_states];
 
   for (int state = 0; state <= number_of_states; state++) {
@@ -52,7 +72,18 @@ KERNEL_DECL void generate_chunk(int tile) {
   }
 
   kernel_generate_chunk(
-      tile_ptr,
+      tile_ptr->t_xmin,
+      tile_ptr->t_xmax,
+      tile_ptr->t_ymin,
+      tile_ptr->t_ymax,
+      tile_ptr->field.vertexx,
+      tile_ptr->field.vertexy,
+      tile_ptr->field.cellx,
+      tile_ptr->field.celly,
+      tile_ptr->field.density0,
+      tile_ptr->field.energy0,
+      tile_ptr->field.xvel0,
+      tile_ptr->field.yvel0,
       number_of_states,
       state_density,
       state_energy,
@@ -67,15 +98,24 @@ KERNEL_DECL void generate_chunk(int tile) {
   );
 }
 
-KERNEL_DECL void ideal_gas(int tile, bool predict) {
+void ideal_gas(int tile, bool predict) {
   tile_type *tile_ptr = &chunk.tiles[tile];
 
-  kernel_ideal_gas(tile_ptr, predict);
+  kernel_ideal_gas(
+      tile_ptr->t_xmin,
+      tile_ptr->t_xmax,
+      tile_ptr->t_ymin,
+      tile_ptr->t_ymax,
+      predict ? tile_ptr->field.density1 : tile_ptr->field.density0,
+      predict ? tile_ptr->field.energy1 : tile_ptr->field.energy0,
+      tile_ptr->field.pressure,
+      tile_ptr->field.soundspeed
+  );
 }
 
-KERNEL_DECL void update_tile_halo(int fields[static 15], int depth) {}
+void update_tile_halo(int fields[static 15], int depth) {}
 
-KERNEL_DECL void update_halo(int fields[static 15], int depth) {
+void update_halo(int fields[static 15], int depth) {
   double kernel_time;
 
   if (profiler_on)
@@ -125,7 +165,7 @@ KERNEL_DECL void update_halo(int fields[static 15], int depth) {
   }
 }
 
-KERNEL_DECL void field_summary() {
+void field_summary() {
   double vol, mass, ie, ke, press;
   double t_vol, t_mass, t_ie, t_ke, t_press;
   double qa_diff;
@@ -249,13 +289,13 @@ KERNEL_DECL void field_summary() {
   }
 }
 
-KERNEL_DECL void visit() {
+void visit() {
   // In the original source, this kernel would have printed data to a .vtk file
   // However, since max_task was always equal to 1, the code of this kernel was never actually executed
   // For this reason, the implementation of it has been skipped
 }
 
-KERNEL_DECL void calc_dt(
+void calc_dt(
     int tile, double *local_dt, char local_control[static 8], double *xl_pos, double *yl_pos, int *jldt, int *kldt
 ) {
   tile_type *tile_ptr = &chunk.tiles[tile];
@@ -279,5 +319,3 @@ KERNEL_DECL void calc_dt(
       break;
   }
 }
-
-#undef KERNEL_DECL
