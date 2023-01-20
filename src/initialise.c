@@ -539,15 +539,15 @@ void start() {
   fields[FIELD_XVEL1] = 1;
   fields[FIELD_YVEL1] = 1;
 
-  // update_halo(fields, 2);
+  update_halo(fields, 2);
 
   if (parallel.boss)
     fputs("\nProblem initalised and generated", g_out);
 
-  // field_summary();
+  field_summary();
 
   if (visit_frequency != 0)
-    // visit();
+    visit();
 
-    profiler_on = profiler_off;
+  profiler_on = profiler_off;
 }

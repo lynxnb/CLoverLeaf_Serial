@@ -135,7 +135,7 @@ void timestep() {
   fields[FIELD_DENSITY0] = 1;
   fields[FIELD_XVEL0] = 1;
   fields[FIELD_YVEL0] = 1;
-  // update_halo(fields, 1);
+  update_halo(fields, 1);
 
   if (profiler_on)
     kernel_time = timer();
@@ -147,7 +147,7 @@ void timestep() {
 
   memset(fields, 0, NUM_FIELDS * sizeof(int));
   fields[FIELD_VISCOSITY] = 1;
-  // update_halo(fields, 1);
+  update_halo(fields, 1);
 
   if (profiler_on)
     kernel_time = timer();

@@ -53,8 +53,6 @@ void kernel_ideal_gas(tile_type *tile, bool predict) {
   for (k = y_min; k <= y_max; k++) {
 #pragma ivdep
     for (j = x_min; j <= x_max; j++) {
-      // (j, k, x_max + 4, x_min - 2, y_min - 2) -> ((x_max + 4) * (k - (y_min - 2)) + (j) - (x_min - 2))
-      // (1, 1, 4 + 4    , 0 - 2    , 0 - 2    ) -> ((8        ) * (1 - (-2       )) + (1) - (-2       ))
       v = 1.0 / density[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)];
       pressure[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] =
           (1.4 - 1.0) * density[FTNREF2D(j, k, x_max + 4, x_min - 2, y_min - 2)] *

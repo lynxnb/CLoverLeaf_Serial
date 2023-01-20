@@ -1,8 +1,12 @@
 # Config tool: https://zed0.co.uk/clang-format-configurator/
 ---
-BasedOnStyle: LLVM
-AlwaysBreakTemplateDeclarations: 'Yes'
-AllowShortFunctionsOnASingleLine: 'Empty'
-ColumnLimit: 120
+BasedOnStyle: Google
 Standard: Cpp11
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+AlignAfterOpenBracket: BlockIndent
 ...

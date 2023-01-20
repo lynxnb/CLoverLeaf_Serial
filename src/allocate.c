@@ -13,7 +13,7 @@
 void allocate_array(double **array, size_t lower_bound, size_t upper_bound) {
   *array = malloc((upper_bound - lower_bound + 1) * sizeof(double));
 
-#ifndef NO_ARRAY_SHIFT_INDEXING
+#ifdef ARRAY_SHIFT_INDEXING
   *array = array_shift_indexing_1D_double(*array, lower_bound);
 #endif
 }
@@ -26,7 +26,7 @@ void allocate_matrix(double **matrix, size_t lower_bound_x, size_t upper_bound_x
                      size_t upper_bound_y) {
   *matrix = malloc((upper_bound_y - lower_bound_y + 1) * (upper_bound_x - lower_bound_x + 1) * sizeof(double));
 
-#ifndef NO_ARRAY_SHIFT_INDEXING
+#ifdef ARRAY_SHIFT_INDEXING
   *matrix = array_shift_indexing_2D_double(*matrix, lower_bound_y, lower_bound_x, upper_bound_x);
 #endif
 }
@@ -35,7 +35,7 @@ void allocate_matrix(double **matrix, size_t lower_bound_x, size_t upper_bound_x
  * @param array A pointer to the array pointer
  */
 void deallocate_array(double **array, size_t lower_bound, size_t upper_bound) {
-#ifndef NO_ARRAY_SHIFT_INDEXING
+#ifdef ARRAY_SHIFT_INDEXING
   *array = array_revert_indexing_1D_double(*array, lower_bound);
 #endif
 
@@ -47,7 +47,7 @@ void deallocate_array(double **array, size_t lower_bound, size_t upper_bound) {
  */
 void deallocate_matrix(double **matrix, size_t lower_bound_x, size_t upper_bound_x, size_t lower_bound_y,
                        size_t upper_bound_y) {
-#ifndef NO_ARRAY_SHIFT_INDEXING
+#ifdef ARRAY_SHIFT_INDEXING
   *matrix = array_revert_indexing_2D_double(*matrix, lower_bound_y, lower_bound_x, upper_bound_x);
 #endif
 
