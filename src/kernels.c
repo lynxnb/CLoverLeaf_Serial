@@ -295,14 +295,67 @@ void visit() {
   // For this reason, the implementation of it has been skipped
 }
 
+void viscosity() {
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *cur_tile = &chunk.tiles[tile];
+
+    kernel_viscosity(
+        cur_tile->t_xmin,
+        cur_tile->t_xmax,
+        cur_tile->t_ymin,
+        cur_tile->t_ymax,
+        cur_tile->field.celldx,
+        cur_tile->field.celldy,
+        cur_tile->field.density0,
+        cur_tile->field.pressure,
+        cur_tile->field.viscosity,
+        cur_tile->field.xvel0,
+        cur_tile->field.yvel0
+    );
+  }
+}
+
 void calc_dt(
     int tile, double *local_dt, char local_control[static 8], double *xl_pos, double *yl_pos, int *jldt, int *kldt
 ) {
   tile_type *tile_ptr = &chunk.tiles[tile];
-  int small = 0, l_control;
+  int l_control;
+  int small = 0;
   *local_dt = G_BIG;
 
-  // kernel_calc_dt();
+  kernel_calc_dt(
+      tile_ptr->t_xmin,
+      tile_ptr->t_xmax,
+      tile_ptr->t_ymin,
+      tile_ptr->t_ymax,
+      dtmin,
+      dtc_safe,
+      dtu_safe,
+      dtv_safe,
+      dtdiv_safe,
+      tile_ptr->field.xarea,
+      tile_ptr->field.yarea,
+      tile_ptr->field.cellx,
+      tile_ptr->field.celly,
+      tile_ptr->field.celldx,
+      tile_ptr->field.celldy,
+      tile_ptr->field.volume,
+      tile_ptr->field.density0,
+      tile_ptr->field.energy0,
+      tile_ptr->field.pressure,
+      tile_ptr->field.viscosity,
+      tile_ptr->field.soundspeed,
+      tile_ptr->field.xvel0,
+      tile_ptr->field.yvel0,
+      tile_ptr->field.work_array1,
+      local_dt,
+      &l_control,
+      xl_pos,
+      yl_pos,
+      jldt,
+      kldt,
+      &small
+  );
 
   switch (l_control) {
     case 1:

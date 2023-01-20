@@ -140,7 +140,7 @@ void timestep() {
   if (profiler_on)
     kernel_time = timer();
 
-  // viscosity();
+  viscosity();
 
   if (profiler_on)
     profiler.viscosity += timer() - kernel_time;
@@ -153,7 +153,7 @@ void timestep() {
     kernel_time = timer();
 
   for (tile = 0; tile < tiles_per_chunk; tile++) {
-    // calc_dt(tile, dtlp, dtl_control, xl_pos, yl_pos, jldt, kldt);
+    calc_dt(tile, &dtlp, dtl_control, &xl_pos, &yl_pos, &jldt, &kldt);
 
     if (dtlp < dt) {
       dt = dtlp;

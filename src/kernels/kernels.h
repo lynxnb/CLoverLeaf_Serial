@@ -103,6 +103,20 @@ extern void kernel_field_summary(
     double *press
 );
 
+extern void kernel_viscosity(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double *celldx,
+    double *celldy,
+    double *density0,
+    double *pressure,
+    double *viscosity,
+    double *xvel0,
+    double *yvel0
+);
+
 extern void kernel_calc_dt(
     int x_min,
     int x_max,

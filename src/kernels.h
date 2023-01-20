@@ -22,6 +22,8 @@ extern void field_summary();
 
 extern void visit();
 
+extern void viscosity();
+
 extern void calc_dt(
     int tile, double *local_dt, char local_control[static 8], double *xl_pos, double *yl_pos, int *jldt, int *kldt
 );
