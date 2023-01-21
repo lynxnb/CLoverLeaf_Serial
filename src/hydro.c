@@ -14,8 +14,6 @@
 
 void timestep();
 
-void PdV(bool);
-
 void hydro() {
   int loc = 1;
   double timerstart, wall_clock, step_clock;
@@ -44,10 +42,10 @@ void hydro() {
     time_val += dt;
 
     if (summary_frequency != 0 && step % summary_frequency == 0)
-      // field_summary();
+      field_summary();
 
       if (visit_frequency != 0 && step % visit_frequency == 0)
-        // visit();
+        visit();
 
         // Sometimes there can be a significant start up cost that appears in the first step.
         // Sometimes it is due to the number of MPI tasks, or OpenCL kernel compilation.
@@ -60,9 +58,9 @@ void hydro() {
 
     if (time_val + G_SMALL > end_time || step >= end_step) {
       complete = true;
-      // field_summary();
+      field_summary();
       if (visit_frequency != 0)
-        // visit();
+        visit();
 
         wall_clock = timer() - timerstart;
       if (parallel.boss) {
@@ -185,5 +183,3 @@ void timestep() {
 
   dtold = dt;
 }
-
-void PdV(bool predict) {}

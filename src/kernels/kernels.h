@@ -150,3 +150,26 @@ extern void kernel_calc_dt(
     int *kldt,
     int *smll
 );
+
+extern void kernel_pdv(
+    bool predict,
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double dt,
+    double *xarea,
+    double *yarea,
+    double *volume,
+    double *density0,
+    double *density1,
+    double *energy0,
+    double *energy1,
+    double *pressure,
+    double *viscosity,
+    double *xvel0,
+    double *xvel1,
+    double *yvel0,
+    double *yvel1,
+    double *volume_change
+);

@@ -372,3 +372,35 @@ void calc_dt(
       break;
   }
 }
+
+void PdV(bool predict) {
+  double kernel_time;
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    kernel_pdv(
+        predict,
+        chunk.tiles[tile].t_xmin,
+        chunk.tiles[tile].t_xmax,
+        chunk.tiles[tile].t_ymin,
+        chunk.tiles[tile].t_ymax,
+        dt,
+        chunk.tiles[tile].field.xarea,
+        chunk.tiles[tile].field.yarea,
+        chunk.tiles[tile].field.volume,
+        chunk.tiles[tile].field.density0,
+        chunk.tiles[tile].field.density1,
+        chunk.tiles[tile].field.energy0,
+        chunk.tiles[tile].field.energy1,
+        chunk.tiles[tile].field.pressure,
+        chunk.tiles[tile].field.viscosity,
+        chunk.tiles[tile].field.xvel0,
+        chunk.tiles[tile].field.xvel1,
+        chunk.tiles[tile].field.yvel0,
+        chunk.tiles[tile].field.yvel1,
+        chunk.tiles[tile].field.work_array1
+    );
+  }
+}
