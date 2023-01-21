@@ -24,7 +24,7 @@
  *  reflective.
  */
 
-#include "../types/data.h"
+#include "data.h"
 #include "ftocmacros.h"
 
 void kernel_update_halo(
@@ -49,7 +49,7 @@ void kernel_update_halo(
     double *vol_flux_y,
     double *mass_flux_x,
     double *mass_flux_y,
-    int fields[static 15],
+    int fields[static NUM_FIELDS],
     int depth
 ) {
   int j, k;

@@ -26,7 +26,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "../types/data.h"
+#include "data.h"
 #include "ftocmacros.h"
 
 void kernel_calc_dt(

@@ -23,27 +23,27 @@
 #define CHUNK_TOP           3 // 4
 #define EXTERNAL_FACE      -1
 
-#define TILE_LEFT           1
-#define TILE_RIGHT          2
-#define TILE_BOTTOM         3
-#define TILE_TOP            4
+#define TILE_LEFT           0 // 1
+#define TILE_RIGHT          1 // 2
+#define TILE_BOTTOM         2 // 3
+#define TILE_TOP            3 // 4
 #define EXTERNAL_TILE      -1
 
-#define FIELD_DENSITY0      1
-#define FIELD_DENSITY1      2
-#define FIELD_ENERGY0       3
-#define FIELD_ENERGY1       4
-#define FIELD_PRESSURE      5
-#define FIELD_VISCOSITY     6
-#define FIELD_SOUNDSPEED    7
-#define FIELD_XVEL0         8
-#define FIELD_XVEL1         9
-#define FIELD_YVEL0        10
-#define FIELD_YVEL1        11
-#define FIELD_VOL_FLUX_X   12
-#define FIELD_VOL_FLUX_Y   13
-#define FIELD_MASS_FLUX_X  14
-#define FIELD_MASS_FLUX_Y  15
+#define FIELD_DENSITY0      0 // 1
+#define FIELD_DENSITY1      1 // 2
+#define FIELD_ENERGY0       2 // 3
+#define FIELD_ENERGY1       3 // 4
+#define FIELD_PRESSURE      4 // 5
+#define FIELD_VISCOSITY     5 // 6
+#define FIELD_SOUNDSPEED    6 // 7
+#define FIELD_XVEL0         7 // 8
+#define FIELD_XVEL1         8 // 9
+#define FIELD_YVEL0         9 // 10
+#define FIELD_YVEL1        10 // 11
+#define FIELD_VOL_FLUX_X   11 // 12
+#define FIELD_VOL_FLUX_Y   12 // 13
+#define FIELD_MASS_FLUX_X  13 // 14
+#define FIELD_MASS_FLUX_Y  14 // 15
 #define NUM_FIELDS         15
 
 #define CELL_DATA           1
@@ -61,7 +61,7 @@
 #define G_POINT             3
 
 #define G_LEN_MAX         500
-// clang-format off
+// clang-format on
 
 typedef struct parallel_type_t {
   bool parallel;

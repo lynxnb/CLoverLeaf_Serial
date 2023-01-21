@@ -5,6 +5,9 @@
 
 #include <stdbool.h>
 
+// As this is a public header, we need to include the types used outside of the kernels
+#include "../types/data.h"
+
 extern void kernel_initialise_chunk(
     int x_min,
     int x_max,
@@ -81,7 +84,7 @@ extern void kernel_update_halo(
     double *vol_flux_y,
     double *mass_flux_x,
     double *mass_flux_y,
-    int fields[static 15],
+    int fields[static NUM_FIELDS],
     int depth
 );
 

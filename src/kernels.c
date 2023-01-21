@@ -113,9 +113,9 @@ void ideal_gas(int tile, bool predict) {
   );
 }
 
-void update_tile_halo(int fields[static 15], int depth) {}
+void update_tile_halo(int fields[static NUM_FIELDS], int depth) {}
 
-void update_halo(int fields[static 15], int depth) {
+void update_halo(int fields[static NUM_FIELDS], int depth) {
   double kernel_time;
 
   if (profiler_on)

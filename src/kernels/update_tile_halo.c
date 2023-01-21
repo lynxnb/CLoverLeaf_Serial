@@ -26,7 +26,7 @@
 
 #include <math.h>
 
-#include "../types/data.h"
+#include "data.h"
 #include "ftocmacros.h"
 
 void kernel_update_tile_halo() {}

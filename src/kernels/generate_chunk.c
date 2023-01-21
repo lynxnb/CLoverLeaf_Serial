@@ -27,7 +27,7 @@
 
 #include <math.h>
 
-#include "../types/data.h"
+#include "data.h"
 #include "ftocmacros.h"
 
 void kernel_generate_chunk(

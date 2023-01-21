@@ -16,7 +16,7 @@ extern void generate_chunk(int tile);
 
 extern void ideal_gas(int tile, bool predict);
 
-extern void update_halo(int fields[static 15], int depth);
+extern void update_halo(int fields[static NUM_FIELDS], int depth);
 
 extern void field_summary();
 
