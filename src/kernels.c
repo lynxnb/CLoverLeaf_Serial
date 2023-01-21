@@ -113,7 +113,215 @@ void ideal_gas(int tile, bool predict) {
   );
 }
 
-void update_tile_halo(int fields[static NUM_FIELDS], int depth) {}
+void update_tile_halo(int fields[static NUM_FIELDS], int depth) {
+  int t_left, t_right, t_up, t_down;
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *tile_ptr = &chunk.tiles[tile];
+
+    t_up = tile_ptr->tile_neighbours[TILE_TOP];
+    t_down = tile_ptr->tile_neighbours[TILE_BOTTOM];
+
+    // Update Top Bottom - Real to Real
+
+    if (t_up != EXTERNAL_TILE) {
+      tile_type *tile_top_ptr = &chunk.tiles[t_up];
+
+      kernel_update_tile_halo_t(
+          tile_ptr->t_xmin,
+          tile_ptr->t_xmax,
+          tile_ptr->t_ymin,
+          tile_ptr->t_ymax,
+          tile_ptr->field.density0,
+          tile_ptr->field.energy0,
+          tile_ptr->field.pressure,
+          tile_ptr->field.viscosity,
+          tile_ptr->field.soundspeed,
+          tile_ptr->field.density1,
+          tile_ptr->field.energy1,
+          tile_ptr->field.xvel0,
+          tile_ptr->field.yvel0,
+          tile_ptr->field.xvel1,
+          tile_ptr->field.yvel1,
+          tile_ptr->field.vol_flux_x,
+          tile_ptr->field.vol_flux_y,
+          tile_ptr->field.mass_flux_x,
+          tile_ptr->field.mass_flux_y,
+          tile_top_ptr->t_xmin,
+          tile_top_ptr->t_xmax,
+          tile_top_ptr->t_ymin,
+          tile_top_ptr->t_ymax,
+          tile_top_ptr->field.density0,
+          tile_top_ptr->field.energy0,
+          tile_top_ptr->field.pressure,
+          tile_top_ptr->field.viscosity,
+          tile_top_ptr->field.soundspeed,
+          tile_top_ptr->field.density1,
+          tile_top_ptr->field.energy1,
+          tile_top_ptr->field.xvel0,
+          tile_top_ptr->field.yvel0,
+          tile_top_ptr->field.xvel1,
+          tile_top_ptr->field.yvel1,
+          tile_top_ptr->field.vol_flux_x,
+          tile_top_ptr->field.vol_flux_y,
+          tile_top_ptr->field.mass_flux_x,
+          tile_top_ptr->field.mass_flux_y,
+          fields,
+          depth
+      );
+    }
+
+    if (t_down != EXTERNAL_TILE) {
+      tile_type *tile_bottom_ptr = &chunk.tiles[t_down];
+
+      kernel_update_tile_halo_b(
+          tile_ptr->t_xmin,
+          tile_ptr->t_xmax,
+          tile_ptr->t_ymin,
+          tile_ptr->t_ymax,
+          tile_ptr->field.density0,
+          tile_ptr->field.energy0,
+          tile_ptr->field.pressure,
+          tile_ptr->field.viscosity,
+          tile_ptr->field.soundspeed,
+          tile_ptr->field.density1,
+          tile_ptr->field.energy1,
+          tile_ptr->field.xvel0,
+          tile_ptr->field.yvel0,
+          tile_ptr->field.xvel1,
+          tile_ptr->field.yvel1,
+          tile_ptr->field.vol_flux_x,
+          tile_ptr->field.vol_flux_y,
+          tile_ptr->field.mass_flux_x,
+          tile_ptr->field.mass_flux_y,
+          tile_bottom_ptr->t_xmin,
+          tile_bottom_ptr->t_xmax,
+          tile_bottom_ptr->t_ymin,
+          tile_bottom_ptr->t_ymax,
+          tile_bottom_ptr->field.density0,
+          tile_bottom_ptr->field.energy0,
+          tile_bottom_ptr->field.pressure,
+          tile_bottom_ptr->field.viscosity,
+          tile_bottom_ptr->field.soundspeed,
+          tile_bottom_ptr->field.density1,
+          tile_bottom_ptr->field.energy1,
+          tile_bottom_ptr->field.xvel0,
+          tile_bottom_ptr->field.yvel0,
+          tile_bottom_ptr->field.xvel1,
+          tile_bottom_ptr->field.yvel1,
+          tile_bottom_ptr->field.vol_flux_x,
+          tile_bottom_ptr->field.vol_flux_y,
+          tile_bottom_ptr->field.mass_flux_x,
+          tile_bottom_ptr->field.mass_flux_y,
+          fields,
+          depth
+      );
+    }
+  }
+
+  // Update Left Right - Ghost, Real, Ghost - > Real
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *tile_ptr = &chunk.tiles[tile];
+
+    int t_left = tile_ptr->tile_neighbours[TILE_LEFT];
+    int t_right = tile_ptr->tile_neighbours[TILE_RIGHT];
+
+    if (t_left != EXTERNAL_TILE) {
+      tile_type *tile_left_ptr = &chunk.tiles[t_left];
+
+      kernel_update_tile_halo_l(
+          tile_ptr->t_xmin,
+          tile_ptr->t_xmax,
+          tile_ptr->t_ymin,
+          tile_ptr->t_ymax,
+          tile_ptr->field.density0,
+          tile_ptr->field.energy0,
+          tile_ptr->field.pressure,
+          tile_ptr->field.viscosity,
+          tile_ptr->field.soundspeed,
+          tile_ptr->field.density1,
+          tile_ptr->field.energy1,
+          tile_ptr->field.xvel0,
+          tile_ptr->field.yvel0,
+          tile_ptr->field.xvel1,
+          tile_ptr->field.yvel1,
+          tile_ptr->field.vol_flux_x,
+          tile_ptr->field.vol_flux_y,
+          tile_ptr->field.mass_flux_x,
+          tile_ptr->field.mass_flux_y,
+          tile_left_ptr->t_xmin,
+          tile_left_ptr->t_xmax,
+          tile_left_ptr->t_ymin,
+          tile_left_ptr->t_ymax,
+          tile_left_ptr->field.density0,
+          tile_left_ptr->field.energy0,
+          tile_left_ptr->field.pressure,
+          tile_left_ptr->field.viscosity,
+          tile_left_ptr->field.soundspeed,
+          tile_left_ptr->field.density1,
+          tile_left_ptr->field.energy1,
+          tile_left_ptr->field.xvel0,
+          tile_left_ptr->field.yvel0,
+          tile_left_ptr->field.xvel1,
+          tile_left_ptr->field.yvel1,
+          tile_left_ptr->field.vol_flux_x,
+          tile_left_ptr->field.vol_flux_y,
+          tile_left_ptr->field.mass_flux_x,
+          tile_left_ptr->field.mass_flux_y,
+          fields,
+          depth
+      );
+    }
+
+    if (t_right != EXTERNAL_TILE) {
+      tile_type *tile_right_ptr = &chunk.tiles[t_right];
+
+      kernel_update_tile_halo_r(
+          tile_ptr->t_xmin,
+          tile_ptr->t_xmax,
+          tile_ptr->t_ymin,
+          tile_ptr->t_ymax,
+          tile_ptr->field.density0,
+          tile_ptr->field.energy0,
+          tile_ptr->field.pressure,
+          tile_ptr->field.viscosity,
+          tile_ptr->field.soundspeed,
+          tile_ptr->field.density1,
+          tile_ptr->field.energy1,
+          tile_ptr->field.xvel0,
+          tile_ptr->field.yvel0,
+          tile_ptr->field.xvel1,
+          tile_ptr->field.yvel1,
+          tile_ptr->field.vol_flux_x,
+          tile_ptr->field.vol_flux_y,
+          tile_ptr->field.mass_flux_x,
+          tile_ptr->field.mass_flux_y,
+          tile_right_ptr->t_xmin,
+          tile_right_ptr->t_xmax,
+          tile_right_ptr->t_ymin,
+          tile_right_ptr->t_ymax,
+          tile_right_ptr->field.density0,
+          tile_right_ptr->field.energy0,
+          tile_right_ptr->field.pressure,
+          tile_right_ptr->field.viscosity,
+          tile_right_ptr->field.soundspeed,
+          tile_right_ptr->field.density1,
+          tile_right_ptr->field.energy1,
+          tile_right_ptr->field.xvel0,
+          tile_right_ptr->field.yvel0,
+          tile_right_ptr->field.xvel1,
+          tile_right_ptr->field.yvel1,
+          tile_right_ptr->field.vol_flux_x,
+          tile_right_ptr->field.vol_flux_y,
+          tile_right_ptr->field.mass_flux_x,
+          tile_right_ptr->field.mass_flux_y,
+          fields,
+          depth
+      );
+    }
+  }
+}
 
 void update_halo(int fields[static NUM_FIELDS], int depth) {
   double kernel_time;
