@@ -176,3 +176,21 @@ extern void kernel_pdv(
     double *yvel1,
     double *volume_change
 );
+
+extern void kernel_accelerate(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double dt,
+    double *xarea,
+    double *yarea,
+    double *volume,
+    double *density0,
+    double *pressure,
+    double *viscosity,
+    double *xvel0,
+    double *yvel0,
+    double *xvel1,
+    double *yvel1
+);

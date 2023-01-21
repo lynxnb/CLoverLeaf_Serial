@@ -380,27 +380,29 @@ void PdV(bool predict) {
     kernel_time = timer();
 
   for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *tile_ptr = &chunk.tiles[tile];
+
     kernel_pdv(
         predict,
-        chunk.tiles[tile].t_xmin,
-        chunk.tiles[tile].t_xmax,
-        chunk.tiles[tile].t_ymin,
-        chunk.tiles[tile].t_ymax,
+        tile_ptr->t_xmin,
+        tile_ptr->t_xmax,
+        tile_ptr->t_ymin,
+        tile_ptr->t_ymax,
         dt,
-        chunk.tiles[tile].field.xarea,
-        chunk.tiles[tile].field.yarea,
-        chunk.tiles[tile].field.volume,
-        chunk.tiles[tile].field.density0,
-        chunk.tiles[tile].field.density1,
-        chunk.tiles[tile].field.energy0,
-        chunk.tiles[tile].field.energy1,
-        chunk.tiles[tile].field.pressure,
-        chunk.tiles[tile].field.viscosity,
-        chunk.tiles[tile].field.xvel0,
-        chunk.tiles[tile].field.xvel1,
-        chunk.tiles[tile].field.yvel0,
-        chunk.tiles[tile].field.yvel1,
-        chunk.tiles[tile].field.work_array1
+        tile_ptr->field.xarea,
+        tile_ptr->field.yarea,
+        tile_ptr->field.volume,
+        tile_ptr->field.density0,
+        tile_ptr->field.density1,
+        tile_ptr->field.energy0,
+        tile_ptr->field.energy1,
+        tile_ptr->field.pressure,
+        tile_ptr->field.viscosity,
+        tile_ptr->field.xvel0,
+        tile_ptr->field.xvel1,
+        tile_ptr->field.yvel0,
+        tile_ptr->field.yvel1,
+        tile_ptr->field.work_array1
     );
   }
 
@@ -430,4 +432,36 @@ void PdV(bool predict) {
     if (profiler_on)
       profiler.revert += timer() - kernel_time;
   }
+}
+
+void accelerate() {
+  double kernel_time;
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *tile_ptr = &chunk.tiles[tile];
+
+    kernel_accelerate(
+        tile_ptr->t_xmin,
+        tile_ptr->t_xmax,
+        tile_ptr->t_ymin,
+        tile_ptr->t_ymax,
+        dt,
+        tile_ptr->field.xarea,
+        tile_ptr->field.yarea,
+        tile_ptr->field.volume,
+        tile_ptr->field.density0,
+        tile_ptr->field.pressure,
+        tile_ptr->field.viscosity,
+        tile_ptr->field.xvel0,
+        tile_ptr->field.yvel0,
+        tile_ptr->field.xvel1,
+        tile_ptr->field.yvel1
+    );
+  }
+
+  if (profiler_on)
+    profiler.acceleration += timer() - kernel_time;
 }

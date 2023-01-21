@@ -31,7 +31,7 @@ void hydro() {
 
     timestep();
     PdV(true);
-    // accelerate();
+    accelerate();
     PdV(false);
     // flux_calc();
     // advection();
