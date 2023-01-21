@@ -403,4 +403,31 @@ void PdV(bool predict) {
         chunk.tiles[tile].field.work_array1
     );
   }
+
+  if (profiler_on)
+    profiler.PdV += timer() - kernel_time;
+
+  if (predict) {
+    if (profiler_on)
+      kernel_time = timer();
+
+    for (int tile = 0; tile < tiles_per_chunk; tile++) {
+      ideal_gas(tile, true);
+    }
+
+    if (profiler_on)
+      profiler.ideal_gas += timer() - kernel_time;
+
+    memset(fields, 0, sizeof(fields));
+    fields[FIELD_PRESSURE] = 1;
+    update_halo(fields, 1);
+
+    if (profiler_on)
+      kernel_time = timer();
+
+    // revert();
+
+    if (profiler_on)
+      profiler.revert += timer() - kernel_time;
+  }
 }
