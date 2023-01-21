@@ -22,7 +22,6 @@ void hydro() {
   double step_time, step_grind;
   double first_step, second_step;
   double kerner_total;
-  double totals[parallel.max_task];
 
   timerstart = timer();
 
@@ -75,7 +74,47 @@ void hydro() {
       }
 
       if (profiler_on) {
-        // do profiler stuff
+        kerner_total = profiler.timestep + profiler.ideal_gas + profiler.viscosity + profiler.PdV + profiler.revert +
+                       profiler.acceleration + profiler.flux + profiler.cell_advection + profiler.mom_advection +
+                       profiler.reset + profiler.summary + profiler.visit + profiler.tile_halo_exchange +
+                       profiler.self_halo_exchange + profiler.mpi_halo_exchange;
+
+        if (parallel.boss) {
+          const char *fmt = "\n%-22s:%16.4f%16.4f\n";
+
+          fprintf(g_out, "\n%-22s%16s%20s\n", "Profiler Output", "Time", "Percentage");
+          fprintf(g_out, fmt, "Timestep", profiler.timestep, profiler.timestep / wall_clock * 100);
+          fprintf(g_out, fmt, "Ideal Gas", profiler.ideal_gas, profiler.ideal_gas / wall_clock * 100);
+          fprintf(g_out, fmt, "Viscosity", profiler.viscosity, profiler.viscosity / wall_clock * 100);
+          fprintf(g_out, fmt, "PdV", profiler.PdV, profiler.PdV / wall_clock * 100);
+          fprintf(g_out, fmt, "Revert", profiler.revert, profiler.revert / wall_clock * 100);
+          fprintf(g_out, fmt, "Acceleration", profiler.acceleration, profiler.acceleration / wall_clock * 100);
+          fprintf(g_out, fmt, "Fluxes", profiler.flux, profiler.flux / wall_clock * 100);
+          fprintf(g_out, fmt, "Cell advection", profiler.cell_advection, profiler.cell_advection / wall_clock * 100);
+          fprintf(g_out, fmt, "Momentum advection", profiler.mom_advection, profiler.mom_advection / wall_clock * 100);
+          fprintf(g_out, fmt, "Reset", profiler.reset, profiler.reset / wall_clock * 100);
+          fprintf(g_out, fmt, "Summary", profiler.summary, profiler.summary / wall_clock * 100);
+          fprintf(g_out, fmt, "Visit", profiler.visit, profiler.visit / wall_clock * 100);
+          fprintf(
+              g_out,
+              fmt,
+              "Tile halo exchange",
+              profiler.tile_halo_exchange,
+              profiler.tile_halo_exchange / wall_clock * 100
+          );
+          fprintf(
+              g_out,
+              fmt,
+              "Self halo exchange",
+              profiler.self_halo_exchange,
+              profiler.self_halo_exchange / wall_clock * 100
+          );
+          fprintf(
+              g_out, fmt, "MPI halo exchange", profiler.mpi_halo_exchange, profiler.mpi_halo_exchange / wall_clock * 100
+          );
+          fprintf(g_out, fmt, "Total", kerner_total, kerner_total / wall_clock * 100);
+          fprintf(g_out, fmt, "The Rest", wall_clock - kerner_total, (wall_clock - kerner_total) / wall_clock * 100);
+        }
       }
 
       clover_finalize();
