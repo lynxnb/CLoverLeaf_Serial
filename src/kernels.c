@@ -482,3 +482,33 @@ void accelerate() {
   if (profiler_on)
     profiler.acceleration += timer() - kernel_time;
 }
+
+void flux_calc() {
+  double kernel_time;
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *tile_ptr = &chunk.tiles[tile];
+
+    kernel_flux_calc(
+        tile_ptr->t_xmin,
+        tile_ptr->t_xmax,
+        tile_ptr->t_ymin,
+        tile_ptr->t_ymax,
+        dt,
+        tile_ptr->field.xarea,
+        tile_ptr->field.yarea,
+        tile_ptr->field.xvel0,
+        tile_ptr->field.yvel0,
+        tile_ptr->field.xvel1,
+        tile_ptr->field.yvel1,
+        tile_ptr->field.vol_flux_x,
+        tile_ptr->field.vol_flux_y
+    );
+  }
+
+  if (profiler_on)
+    profiler.flux += timer() - kernel_time;
+}

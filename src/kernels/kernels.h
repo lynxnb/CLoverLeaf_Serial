@@ -198,3 +198,19 @@ extern void kernel_accelerate(
     double *xvel1,
     double *yvel1
 );
+
+extern void kernel_flux_calc(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double dt,
+    double *xarea,
+    double *yarea,
+    double *xvel0,
+    double *yvel0,
+    double *xvel1,
+    double *yvel1,
+    double *vol_flux_x,
+    double *vol_flux_y
+);

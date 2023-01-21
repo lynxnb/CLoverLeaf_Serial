@@ -31,3 +31,5 @@ extern void calc_dt(
 extern void PdV(bool predict);
 
 extern void accelerate();
+
+extern void flux_calc();
