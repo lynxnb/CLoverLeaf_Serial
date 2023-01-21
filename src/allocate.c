@@ -59,7 +59,7 @@ void deallocate_matrix(double **matrix, size_t lower_bound_x, size_t upper_bound
  * @details The data fields for the mesh chunk are allocated based on the mesh size
  */
 void build_field() {
-  int tile, j, k, row_size;
+  int tile, j, k;
 
   for (tile = 0; tile < tiles_per_chunk; tile++) {
     tile_type *cur_tile = &chunk.tiles[tile];
@@ -133,72 +133,68 @@ void build_field() {
     // are allocated. This prevents first touch overheads in the main code
     // cycle which can skew timings in the first step
 
-    row_size = cur_tile->t_ymax + 3 - cur_tile->t_ymin - 2 + 1; // upper - lower + 1
-    for (k = cur_tile->t_ymin - 2; k <= cur_tile->t_ymax + 3; k++) {
-      for (j = cur_tile->t_xmin - 2; j <= cur_tile->t_xmax + 3; j++) {
-        cur_field->work_array1[k * row_size + j] = 0.0;
-        cur_field->work_array2[k * row_size + j] = 0.0;
-        cur_field->work_array3[k * row_size + j] = 0.0;
-        cur_field->work_array4[k * row_size + j] = 0.0;
-        cur_field->work_array5[k * row_size + j] = 0.0;
-        cur_field->work_array6[k * row_size + j] = 0.0;
-        cur_field->work_array7[k * row_size + j] = 0.0;
+    for (k = 0; k <= (cur_tile->t_ymax + 3) - (cur_tile->t_ymin - 2); k++) {
+      for (j = 0; j <= (cur_tile->t_xmax + 3) - (cur_tile->t_xmin - 2); j++) {
+        cur_field->work_array1[k, j] = 0.0;
+        cur_field->work_array2[k, j] = 0.0;
+        cur_field->work_array3[k, j] = 0.0;
+        cur_field->work_array4[k, j] = 0.0;
+        cur_field->work_array5[k, j] = 0.0;
+        cur_field->work_array6[k, j] = 0.0;
+        cur_field->work_array7[k, j] = 0.0;
 
-        cur_field->xvel0[k * row_size + j] = 0.0;
-        cur_field->xvel1[k * row_size + j] = 0.0;
-        cur_field->yvel0[k * row_size + j] = 0.0;
-        cur_field->yvel1[k * row_size + j] = 0.0;
+        cur_field->xvel0[k, j] = 0.0;
+        cur_field->xvel1[k, j] = 0.0;
+        cur_field->yvel0[k, j] = 0.0;
+        cur_field->yvel1[k, j] = 0.0;
       }
     }
 
-    row_size = cur_tile->t_ymax + 2 - cur_tile->t_ymin - 2 + 1; // upper - lower + 1
-    for (k = cur_tile->t_ymin - 2; k <= cur_tile->t_ymax + 2; k++) {
-      for (j = cur_tile->t_xmin - 2; j <= cur_tile->t_xmax + 2; j++) {
-        cur_field->density0[k * row_size + j] = 0.0;
-        cur_field->density1[k * row_size + j] = 0.0;
-        cur_field->energy0[k * row_size + j] = 0.0;
-        cur_field->energy1[k * row_size + j] = 0.0;
-        cur_field->pressure[k * row_size + j] = 0.0;
-        cur_field->viscosity[k * row_size + j] = 0.0;
-        cur_field->soundspeed[k * row_size + j] = 0.0;
-        cur_field->volume[k * row_size + j] = 0.0;
+    for (k = 0; k <= (cur_tile->t_ymax + 2) - (cur_tile->t_ymin - 2); k++) {
+      for (j = 0; j <= (cur_tile->t_xmax + 2) - (cur_tile->t_xmin - 2); j++) {
+        cur_field->density0[k, j] = 0.0;
+        cur_field->density1[k, j] = 0.0;
+        cur_field->energy0[k, j] = 0.0;
+        cur_field->energy1[k, j] = 0.0;
+        cur_field->pressure[k, j] = 0.0;
+        cur_field->viscosity[k, j] = 0.0;
+        cur_field->soundspeed[k, j] = 0.0;
+        cur_field->volume[k, j] = 0.0;
       }
     }
 
-    row_size = cur_tile->t_ymax + 2 - cur_tile->t_ymin - 2 + 1; // upper - lower + 1
-    for (k = cur_tile->t_ymin - 2; k <= cur_tile->t_ymax + 2; k++) {
-      for (j = cur_tile->t_xmin - 2; j <= cur_tile->t_xmax + 3; j++) {
-        cur_field->vol_flux_x[k * row_size + j] = 0.0;
-        cur_field->mass_flux_x[k * row_size + j] = 0.0;
-        cur_field->xarea[k * row_size + j] = 0.0;
+    for (k = 0; k <= (cur_tile->t_ymax + 2) - (cur_tile->t_ymin - 2); k++) {
+      for (j = 0; j <= (cur_tile->t_xmax + 3) - (cur_tile->t_xmin - 2); j++) {
+        cur_field->vol_flux_x[k, j] = 0.0;
+        cur_field->mass_flux_x[k, j] = 0.0;
+        cur_field->xarea[k, j] = 0.0;
       }
     }
 
-    row_size = cur_tile->t_ymax + 3 - cur_tile->t_ymin - 2 + 1; // upper - lower + 1
-    for (k = cur_tile->t_ymin - 2; k <= cur_tile->t_ymax + 3; k++) {
-      for (j = cur_tile->t_xmin - 2; j <= cur_tile->t_xmax + 2; j++) {
-        cur_field->vol_flux_y[k * row_size + j] = 0.0;
-        cur_field->mass_flux_y[k * row_size + j] = 0.0;
-        cur_field->yarea[k * row_size + j] = 0.0;
+    for (k = 0; k <= (cur_tile->t_ymax + 3) - (cur_tile->t_ymin - 2); k++) {
+      for (j = 0; j <= (cur_tile->t_xmax + 2) - (cur_tile->t_xmin - 2); j++) {
+        cur_field->vol_flux_y[k, j] = 0.0;
+        cur_field->mass_flux_y[k, j] = 0.0;
+        cur_field->yarea[k, j] = 0.0;
       }
     }
 
-    for (j = cur_tile->t_xmin - 2; j <= cur_tile->t_xmax + 2; j++) {
+    for (j = 0; j <= (cur_tile->t_xmax + 2) - (cur_tile->t_xmin - 2); j++) {
       cur_field->cellx[j] = 0.0;
       cur_field->celldx[j] = 0.0;
     }
 
-    for (j = cur_tile->t_ymin - 2; j <= cur_tile->t_ymax + 2; j++) {
+    for (j = 0; j <= (cur_tile->t_ymax + 2) - (cur_tile->t_ymin - 2); j++) {
       cur_field->celly[j] = 0.0;
       cur_field->celldy[j] = 0.0;
     }
 
-    for (j = cur_tile->t_xmin - 2; j <= cur_tile->t_xmax + 3; j++) {
+    for (j = 0; j <= (cur_tile->t_xmax + 3) - (cur_tile->t_xmin - 2); j++) {
       cur_field->vertexx[j] = 0.0;
       cur_field->vertexdx[j] = 0.0;
     }
 
-    for (j = cur_tile->t_ymin - 2; j <= cur_tile->t_ymax + 3; j++) {
+    for (j = 0; j <= (cur_tile->t_ymax + 3) - (cur_tile->t_ymin - 2); j++) {
       cur_field->vertexy[j] = 0.0;
       cur_field->vertexdy[j] = 0.0;
     }
