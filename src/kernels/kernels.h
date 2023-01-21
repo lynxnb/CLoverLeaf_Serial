@@ -264,3 +264,18 @@ extern void kernel_advec_mom(
     int sweep_number,
     int direction
 );
+
+extern void kernel_reset_field(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double *density0,
+    double *density1,
+    double *energy0,
+    double *energy1,
+    double *xvel0,
+    double *xvel1,
+    double *yvel0,
+    double *yvel1
+);

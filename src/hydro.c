@@ -35,7 +35,7 @@ void hydro() {
     PdV(false);
     flux_calc();
     advection();
-    // reset_field();
+    reset_field();
 
     advect_x = !advect_x;
 

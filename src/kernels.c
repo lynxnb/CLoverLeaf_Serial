@@ -650,3 +650,32 @@ void advection() {
   if (profiler_on)
     profiler.mom_advection += timer() - kernel_time;
 }
+
+void reset_field() {
+  double kernel_time;
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *tile_ptr = &chunk.tiles[tile];
+
+    kernel_reset_field(
+        tile_ptr->t_xmin,
+        tile_ptr->t_xmax,
+        tile_ptr->t_ymin,
+        tile_ptr->t_ymax,
+        tile_ptr->field.density0,
+        tile_ptr->field.density1,
+        tile_ptr->field.energy0,
+        tile_ptr->field.energy1,
+        tile_ptr->field.xvel0,
+        tile_ptr->field.xvel1,
+        tile_ptr->field.yvel0,
+        tile_ptr->field.yvel1
+    );
+  }
+
+  if (profiler_on)
+    profiler.reset += timer() - kernel_time;
+}
