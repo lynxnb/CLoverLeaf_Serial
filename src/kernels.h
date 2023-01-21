@@ -33,3 +33,5 @@ extern void PdV(bool predict);
 extern void accelerate();
 
 extern void flux_calc();
+
+extern void advection();

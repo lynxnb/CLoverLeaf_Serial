@@ -512,3 +512,141 @@ void flux_calc() {
   if (profiler_on)
     profiler.flux += timer() - kernel_time;
 }
+
+void advec_cell(int tile, int sweep_number, int direction) {
+  tile_type *tile_ptr = &chunk.tiles[tile];
+
+  kernel_advec_cell(
+      tile_ptr->t_xmin,
+      tile_ptr->t_xmax,
+      tile_ptr->t_ymin,
+      tile_ptr->t_ymax,
+      direction,
+      sweep_number,
+      tile_ptr->field.vertexdx,
+      tile_ptr->field.vertexdy,
+      tile_ptr->field.volume,
+      tile_ptr->field.density1,
+      tile_ptr->field.energy1,
+      tile_ptr->field.mass_flux_x,
+      tile_ptr->field.vol_flux_x,
+      tile_ptr->field.mass_flux_y,
+      tile_ptr->field.vol_flux_y,
+      tile_ptr->field.work_array1,
+      tile_ptr->field.work_array2,
+      tile_ptr->field.work_array3,
+      tile_ptr->field.work_array4,
+      tile_ptr->field.work_array5,
+      tile_ptr->field.work_array6,
+      tile_ptr->field.work_array7
+  );
+}
+
+void advec_mom(int tile, int which_vel, int direction, int sweep_number) {
+  tile_type *tile_ptr = &chunk.tiles[tile];
+
+  kernel_advec_mom(
+      tile_ptr->t_xmin,
+      tile_ptr->t_xmax,
+      tile_ptr->t_ymin,
+      tile_ptr->t_ymax,
+      which_vel == G_XDIR ? tile_ptr->field.xvel1 : tile_ptr->field.yvel1,
+      tile_ptr->field.mass_flux_x,
+      tile_ptr->field.vol_flux_x,
+      tile_ptr->field.mass_flux_y,
+      tile_ptr->field.vol_flux_y,
+      tile_ptr->field.volume,
+      tile_ptr->field.density1,
+      tile_ptr->field.work_array1,
+      tile_ptr->field.work_array2,
+      tile_ptr->field.work_array3,
+      tile_ptr->field.work_array4,
+      tile_ptr->field.work_array5,
+      tile_ptr->field.work_array6,
+      tile_ptr->field.celldx,
+      tile_ptr->field.celldy,
+      which_vel,
+      sweep_number,
+      direction
+  );
+}
+
+void advection() {
+  int sweep_number, direction, tile;
+  int xvel, yvel;
+  int fields[NUM_FIELDS];
+  double kernel_time;
+
+  sweep_number = 1;
+  direction = advect_x ? G_XDIR : G_YDIR;
+  xvel = G_XDIR;
+  yvel = G_YDIR;
+
+  memset(fields, 0, sizeof(fields));
+  fields[FIELD_ENERGY1] = 1;
+  fields[FIELD_DENSITY1] = 1;
+  fields[FIELD_VOL_FLUX_X] = 1;
+  fields[FIELD_VOL_FLUX_Y] = 1;
+  update_halo(fields, 2);
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (tile = 0; tile < tiles_per_chunk; tile++)
+    advec_cell(tile, sweep_number, direction);
+
+  if (profiler_on)
+    profiler.cell_advection += timer() - kernel_time;
+
+  memset(fields, 0, sizeof(fields));
+  fields[FIELD_DENSITY1] = 1;
+  fields[FIELD_ENERGY1] = 1;
+  fields[FIELD_XVEL1] = 1;
+  fields[FIELD_YVEL1] = 1;
+  fields[FIELD_MASS_FLUX_X] = 1;
+  fields[FIELD_MASS_FLUX_Y] = 1;
+  update_halo(fields, 2);
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (tile = 0; tile < tiles_per_chunk; tile++) {
+    advec_mom(tile, xvel, direction, sweep_number);
+    advec_mom(tile, yvel, direction, sweep_number);
+  }
+
+  if (profiler_on)
+    profiler.mom_advection += timer() - kernel_time;
+
+  sweep_number = 2;
+  direction = advect_x ? G_YDIR : G_XDIR;
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (tile = 0; tile < tiles_per_chunk; tile++)
+    advec_cell(tile, sweep_number, direction);
+
+  if (profiler_on)
+    profiler.cell_advection += timer() - kernel_time;
+
+  memset(fields, 0, sizeof(fields));
+  fields[FIELD_DENSITY1] = 1;
+  fields[FIELD_ENERGY1] = 1;
+  fields[FIELD_XVEL1] = 1;
+  fields[FIELD_YVEL1] = 1;
+  fields[FIELD_MASS_FLUX_X] = 1;
+  fields[FIELD_MASS_FLUX_Y] = 1;
+  update_halo(fields, 2);
+
+  if (profiler_on)
+    kernel_time = timer();
+
+  for (tile = 0; tile < tiles_per_chunk; tile++) {
+    advec_mom(tile, xvel, direction, sweep_number);
+    advec_mom(tile, yvel, direction, sweep_number);
+  }
+
+  if (profiler_on)
+    profiler.mom_advection += timer() - kernel_time;
+}

@@ -214,3 +214,53 @@ extern void kernel_flux_calc(
     double *vol_flux_x,
     double *vol_flux_y
 );
+
+extern void kernel_advec_cell(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    int dir,
+    int sweep_number,
+    double *vertexdx,
+    double *vertexdy,
+    double *volume,
+    double *density1,
+    double *energy1,
+    double *mass_flux_x,
+    double *vol_flux_x,
+    double *mass_flux_y,
+    double *vol_flux_y,
+    double *pre_vol,
+    double *post_vol,
+    double *pre_mass,
+    double *post_mass,
+    double *advec_vol,
+    double *post_ener,
+    double *ener_flux
+);
+
+extern void kernel_advec_mom(
+    int x_min,
+    int x_max,
+    int y_min,
+    int y_max,
+    double *vel1,
+    double *mass_flux_x,
+    double *vol_flux_x,
+    double *mass_flux_y,
+    double *vol_flux_y,
+    double *volume,
+    double *density1,
+    double *node_flux,
+    double *node_mass_post,
+    double *node_mass_pre,
+    double *mom_flux,
+    double *pre_vol,
+    double *post_vol,
+    double *celldx,
+    double *celldy,
+    int which_vel,
+    int sweep_number,
+    int direction
+);
