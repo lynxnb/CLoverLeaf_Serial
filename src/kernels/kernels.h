@@ -177,6 +177,10 @@ extern void kernel_pdv(
     double *volume_change
 );
 
+extern void kernel_revert(
+    int x_min, int x_max, int y_min, int y_max, double *density0, double *density1, double *energy0, double *energy1
+);
+
 extern void kernel_accelerate(
     int x_min,
     int x_max,

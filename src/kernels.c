@@ -372,6 +372,23 @@ void calc_dt(
   }
 }
 
+void revert() {
+  for (int tile = 0; tile < tiles_per_chunk; tile++) {
+    tile_type *tile_ptr = &chunk.tiles[tile];
+
+    kernel_revert(
+        tile_ptr->t_xmin,
+        tile_ptr->t_xmax,
+        tile_ptr->t_ymin,
+        tile_ptr->t_ymax,
+        tile_ptr->field.density0,
+        tile_ptr->field.density1,
+        tile_ptr->field.energy0,
+        tile_ptr->field.energy1
+    );
+  }
+}
+
 void PdV(bool predict) {
   double kernel_time;
   int fields[NUM_FIELDS];
@@ -427,7 +444,7 @@ void PdV(bool predict) {
     if (profiler_on)
       kernel_time = timer();
 
-    // revert();
+    revert();
 
     if (profiler_on)
       profiler.revert += timer() - kernel_time;
