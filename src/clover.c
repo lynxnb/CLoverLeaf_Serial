@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
-#include "data.h"
-#include "definitions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "data.h"
+#include "definitions.h"
 
 void clover_init_comms() {
   const int rank = 0, size = 1;
@@ -57,7 +58,7 @@ void clover_decompose(int x_cells, int y_cells, int *left, int *right, int *bott
   chunk_x = number_of_chunks;
   chunk_y = 1;
 
-  split_found = 0; // Used to detect 1D decomposition
+  split_found = 0;  // Used to detect 1D decomposition
 
   for (int c = 0; c < number_of_chunks; c++) {
     if (number_of_chunks % c == 0) {
@@ -146,7 +147,7 @@ void clover_tile_decompose(int chunk_x_cells, int chunk_y_cells) {
   int tile_x = tiles_per_chunk;
   int tile_y = 1;
 
-  bool split_found = false; // Used to detect 1D decomposition
+  bool split_found = false;  // Used to detect 1D decomposition
 
   for (int t = 0; t < tiles_per_chunk; t++) {
     if (tiles_per_chunk % t == 0) {
@@ -247,7 +248,7 @@ void clover_allocate_buffers() {
   if (parallel.task == chunk.task) {
     chunk.left_snd_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
     chunk.left_rcv_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
-    
+
     chunk.right_snd_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
     chunk.right_rcv_buffer = malloc(10 * 2 * (chunk.y_max + 5) * sizeof(double));
 
@@ -263,7 +264,7 @@ void clover_deallocate_buffers() {
   if (parallel.task == chunk.task) {
     free(chunk.left_snd_buffer);
     free(chunk.left_rcv_buffer);
-    
+
     free(chunk.right_snd_buffer);
     free(chunk.right_rcv_buffer);
 
@@ -273,8 +274,4 @@ void clover_deallocate_buffers() {
     free(chunk.top_snd_buffer);
     free(chunk.top_rcv_buffer);
   }
-}
-
-void clover_min(double dt) {
-  // empty
 }

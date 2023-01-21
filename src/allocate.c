@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
+#include <stdlib.h>
+
 #include "definitions.h"
 #include "utils/array.h"
-
-#include <stdlib.h>
 
 /** @brief Allocates a 1D array, and performs shifting of the array pointer to allow access to the array using the same
  * indexing as in Fortran
@@ -22,8 +22,9 @@ void allocate_array(double **array, size_t lower_bound, size_t upper_bound) {
  * same indexing as in Fortran
  * @param matrix A pointer to the matrix pointer
  */
-void allocate_matrix(double **matrix, size_t lower_bound_x, size_t upper_bound_x, size_t lower_bound_y,
-                     size_t upper_bound_y) {
+void allocate_matrix(
+    double **matrix, size_t lower_bound_x, size_t upper_bound_x, size_t lower_bound_y, size_t upper_bound_y
+) {
   *matrix = malloc((upper_bound_y - lower_bound_y + 1) * (upper_bound_x - lower_bound_x + 1) * sizeof(double));
 
 #ifdef ARRAY_SHIFT_INDEXING
@@ -45,8 +46,9 @@ void deallocate_array(double **array, size_t lower_bound, size_t upper_bound) {
 /** @brief Dellocates a 2D array previously allocated with `allocate_matrix` by reverting the shifting first
  * @param matrix A pointer to the matrix pointer
  */
-void deallocate_matrix(double **matrix, size_t lower_bound_x, size_t upper_bound_x, size_t lower_bound_y,
-                       size_t upper_bound_y) {
+void deallocate_matrix(
+    double **matrix, size_t lower_bound_x, size_t upper_bound_x, size_t lower_bound_y, size_t upper_bound_y
+) {
 #ifdef ARRAY_SHIFT_INDEXING
   *matrix = array_revert_indexing_2D_double(*matrix, lower_bound_y, lower_bound_x, upper_bound_x);
 #endif
@@ -65,53 +67,75 @@ void build_field() {
     tile_type *cur_tile = &chunk.tiles[tile];
     field_type *cur_field = &cur_tile->field;
 
-    allocate_matrix(&cur_field->density0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->density1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->energy0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->energy1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->pressure, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->viscosity, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->soundspeed, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
+    allocate_matrix(
+        &cur_field->density0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->density1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->energy0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->energy1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->pressure, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->viscosity, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->soundspeed, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
 
-    allocate_matrix(&cur_field->xvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->xvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->yvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->yvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
+    allocate_matrix(
+        &cur_field->xvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->xvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->yvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->yvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
 
-    allocate_matrix(&cur_field->vol_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->mass_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->vol_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->mass_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
+    allocate_matrix(
+        &cur_field->vol_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->mass_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->vol_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->mass_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
 
-    allocate_matrix(&cur_field->work_array1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->work_array2, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->work_array3, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->work_array4, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->work_array5, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->work_array6, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
-    allocate_matrix(&cur_field->work_array7, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
+    allocate_matrix(
+        &cur_field->work_array1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->work_array2, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->work_array3, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->work_array4, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->work_array5, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->work_array6, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    allocate_matrix(
+        &cur_field->work_array7, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
 
     allocate_array(&cur_field->cellx, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2);
     allocate_array(&cur_field->celly, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2);
@@ -122,12 +146,15 @@ void build_field() {
     allocate_array(&cur_field->vertexdx, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3);
     allocate_array(&cur_field->vertexdy, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3);
 
-    allocate_matrix(&cur_field->volume, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->xarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 2);
-    allocate_matrix(&cur_field->yarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                    cur_tile->t_ymax + 3);
+    allocate_matrix(
+        &cur_field->volume, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->xarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    allocate_matrix(
+        &cur_field->yarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
 
     // Zeroing isn't strictly neccessary but it ensures physical pages
     // are allocated. This prevents first touch overheads in the main code
@@ -206,53 +233,75 @@ void destroy_field() {
     tile_type *cur_tile = &chunk.tiles[tile];
     field_type *cur_field = &cur_tile->field;
 
-    deallocate_matrix(&cur_field->density0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->density1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->energy0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->energy1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->pressure, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->viscosity, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->soundspeed, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
+    deallocate_matrix(
+        &cur_field->density0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->density1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->energy0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->energy1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->pressure, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->viscosity, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->soundspeed, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
 
-    deallocate_matrix(&cur_field->xvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->xvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->yvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->yvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
+    deallocate_matrix(
+        &cur_field->xvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->xvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->yvel0, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->yvel1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
 
-    deallocate_matrix(&cur_field->vol_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->mass_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->vol_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->mass_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
+    deallocate_matrix(
+        &cur_field->vol_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->mass_flux_x, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->vol_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->mass_flux_y, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
 
-    deallocate_matrix(&cur_field->work_array1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->work_array2, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->work_array3, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->work_array4, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->work_array5, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->work_array6, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
-    deallocate_matrix(&cur_field->work_array7, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
+    deallocate_matrix(
+        &cur_field->work_array1, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->work_array2, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->work_array3, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->work_array4, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->work_array5, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->work_array6, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
+    deallocate_matrix(
+        &cur_field->work_array7, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
 
     deallocate_array(&cur_field->cellx, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2);
     deallocate_array(&cur_field->celly, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2);
@@ -263,11 +312,14 @@ void destroy_field() {
     deallocate_array(&cur_field->vertexdx, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3);
     deallocate_array(&cur_field->vertexdy, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3);
 
-    deallocate_matrix(&cur_field->volume, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->xarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 2);
-    deallocate_matrix(&cur_field->yarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2,
-                      cur_tile->t_ymax + 3);
+    deallocate_matrix(
+        &cur_field->volume, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->xarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 3, cur_tile->t_ymin - 2, cur_tile->t_ymax + 2
+    );
+    deallocate_matrix(
+        &cur_field->yarea, cur_tile->t_xmin - 2, cur_tile->t_xmax + 2, cur_tile->t_ymin - 2, cur_tile->t_ymax + 3
+    );
   }
 }

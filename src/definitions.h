@@ -3,10 +3,11 @@
 
 #pragma once
 
-#include "types/definitions.h"
 #include <stdbool.h>
 
-extern state_type *states; // allocatable
+#include "types/definitions.h"
+
+extern state_type *states;  // allocatable
 extern int number_of_states;
 
 extern int step;

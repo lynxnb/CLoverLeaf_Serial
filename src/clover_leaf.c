@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
+#include <stdio.h>
+
 #include "clover.h"
 #include "data.h"
-#include <stdio.h>
 
 extern void initialise();
 

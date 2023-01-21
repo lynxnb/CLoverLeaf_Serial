@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
-#include "data.h"
-#include "definitions.h"
-#include "parse.h"
-#include "utils/array.h"
+#include "tests.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#include "tests.h"
+#include "data.h"
+#include "definitions.h"
+#include "parse.h"
+#include "utils/array.h"
 
 void test_parse_getword() {
   char test[16] = " test_problem 2\0";
@@ -64,12 +65,39 @@ void test_parse_file() {
 }
 
 void test_timestep_print() {
-  LOG_PRINT("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 1, 0.0000000, "sound",
-         6.16e-03, 1, 1, 6.01e-154, 6.01e-154);
-  LOG_PRINT("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 2, 0.0061626, "sound",
-         3.76e-03, 1, 1, 3.81e-320, 6.94e-310);
-  LOG_PRINT("Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n", 3, 0.0099242, "sound",
-         4.78e-03, 1, 1, 3.81e-320, 4.76e-321);
+  LOG_PRINT(
+      "Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n",
+      1,
+      0.0000000,
+      "sound",
+      6.16e-03,
+      1,
+      1,
+      6.01e-154,
+      6.01e-154
+  );
+  LOG_PRINT(
+      "Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n",
+      2,
+      0.0061626,
+      "sound",
+      3.76e-03,
+      1,
+      1,
+      3.81e-320,
+      6.94e-310
+  );
+  LOG_PRINT(
+      "Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n",
+      3,
+      0.0099242,
+      "sound",
+      4.78e-03,
+      1,
+      1,
+      3.81e-320,
+      4.76e-321
+  );
 }
 
 void test_relative_array_indexing_1D() {
@@ -170,8 +198,11 @@ void test_relative_array_indexing_2D() {
   // Print array by index fiddling
   for (y = t_ymin - 2; y <= t_ymax + 2; y++) { // for every row
     for (x = t_xmin - 2; x <= t_xmax + 2; x++) // for every element in the row
-      LOG_PRINT("[%2d]%4.1f  ", (y - (t_ymin - 2)) * row_size + (x - (t_xmin - 2)),
-             matrix[(y - (t_ymin - 2)) * row_size + (x - (t_xmin - 2))]);
+      LOG_PRINT(
+          "[%2d]%4.1f  ",
+          (y - (t_ymin - 2)) * row_size + (x - (t_xmin - 2)),
+          matrix[(y - (t_ymin - 2)) * row_size + (x - (t_xmin - 2))]
+      );
     LOG_PRINT("\n");
   }
   LOG_PRINT("\n");
@@ -196,8 +227,9 @@ extern void destroy_field();
 
 void test_build_field() {
   tiles_per_chunk = 1;
-  LOG_PRINT("Allocating %d tiles per chunk, total size: %zu bytes\n", tiles_per_chunk,
-         tiles_per_chunk * sizeof(tile_type));
+  LOG_PRINT(
+      "Allocating %d tiles per chunk, total size: %zu bytes\n", tiles_per_chunk, tiles_per_chunk * sizeof(tile_type)
+  );
   chunk.tiles = malloc(tiles_per_chunk * sizeof(tile_type));
 
   LOG_PRINT("Building field...\n");
@@ -219,7 +251,7 @@ void test_build_field_stress() {
   bool prev_log_enabled = log_enabled;
   // Silence log to avoid spamming the console (also makes the test run much faster)
   log_enabled = false;
-  
+
   clock_t start = clock();
   for (int i = 0; i < 10000000; i++) {
     test_build_field();

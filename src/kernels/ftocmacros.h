@@ -1,12 +1,13 @@
 /*
-** Fortran to C index translation macros for Mark Govett's ctof for 
-** GPU kernels.  
+** Fortran to C index translation macros for Mark Govett's ctof for
+** GPU kernels.
 **
 ** Tom Henderson
 ** 9/25/08
 **
 */
 
+// clang-format off
 #ifndef _FTOC_MACROS_
 #define _FTOC_MACROS_
 
@@ -28,4 +29,4 @@
 #define SIGN(a,b) (((b) <  (0) && (a > (0))||((b) > (0) && ((a)<(0)))) ? (-a) : (a))
 #define SQR(a) ((a)*(a))
 #endif /* _FTOC_MACROS_ */
-
+// clang-format on

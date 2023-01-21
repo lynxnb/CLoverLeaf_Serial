@@ -191,7 +191,8 @@ void field_summary() {
   if (profiler_on)
     kernel_time = timer();
 
-  for (int tile = 0; tile < tiles_per_chunk; tile++) ideal_gas(tile, false);
+  for (int tile = 0; tile < tiles_per_chunk; tile++)
+    ideal_gas(tile, false);
 
   if (profiler_on) {
     profiler.ideal_gas += timer() - kernel_time;

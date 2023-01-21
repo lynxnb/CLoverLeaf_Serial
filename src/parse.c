@@ -1,29 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
-#include "data.h"
-#include "report.h"
-#include "utils/string.h"
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-static FILE *file; // iu: current file
+#include "data.h"
+#include "report.h"
+#include "utils/string.h"
 
-char line_buf[100]; // Line buffer
+static FILE *file;  // iu: current file
+
+char line_buf[100];  // Line buffer
 
 char *line;
-char *mask; // mask: section of the file the user is interested in
+char *mask;  // mask: section of the file the user is interested in
 char *rest;
-char cur_section[100]; // here: section the parser is currently in
-char active_sel[100];  // sel: active selector (*select: statement)
+char cur_section[100];  // here: section the parser is currently in
+char active_sel[100];   // sel: active selector (*select: statement)
 
 int parse_init(FILE *p_file, char *cmask) {
   file = p_file;
-  mask = cmask;       // Set mask for which part of the file we are interested in
-  line_buf[0] = '\0'; // Reset the line buffer
+  mask = cmask;        // Set mask for which part of the file we are interested in
+  line_buf[0] = '\0';  // Reset the line buffer
   line = "";
   cur_section[0] = '\0';
   active_sel[0] = '\0';
@@ -35,7 +36,7 @@ int parse_init(FILE *p_file, char *cmask) {
 
 int parse_getline(const int arg) {
   while (true) {
-    if (fgets(line_buf, 100, file) == NULL) // Read in the next line
+    if (fgets(line_buf, 100, file) == NULL)  // Read in the next line
       return 1;
 
     // Remove invalid characters
@@ -75,8 +76,9 @@ int parse_getline(const int arg) {
         *c = ' ';
 
     if (!strcmp(line, "*select:")) {
-      report_error("parse_getline",
-                   "'*select:' support is not implemented, please init the parser with a mask instead");
+      report_error(
+          "parse_getline", "'*select:' support is not implemented, please init the parser with a mask instead"
+      );
       /*
       // Save selector and continue to the next line
       strcpy(selector, trim(line + 8));
@@ -87,10 +89,10 @@ int parse_getline(const int arg) {
     // Check for section tags
     if (line[0] == '*') {
       char *section_tag;
-      char *s = strchr(line, ' '); // eg. "*clover leaf"
+      char *s = strchr(line, ' ');  // eg. "*clover leaf"
       if (s != NULL)
         *s = '\0';
-      section_tag = rtrim(line); // eg. "*clover"
+      section_tag = rtrim(line);  // eg. "*clover"
 
       // Check if it's an end tag
       if (!strncmp(section_tag + 1, "end", 3)) {

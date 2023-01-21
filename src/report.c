@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
+#include <stdio.h>
+
 #include "clover.h"
 #include "data.h"
-#include <stdio.h>
 
 void report_error_arg(const char *location, const char *error, const char *arg) {
   const char *format = "\nError in %s: %s%s\n\nCLOVER is terminating.\n";

@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "clover.h"
 #include "data.h"
 #include "definitions.h"
@@ -9,10 +14,6 @@
 #include "report.h"
 #include "utils/math.h"
 #include "utils/string.h"
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 void read_input();
 
@@ -53,23 +54,25 @@ void initialise() {
       if (errno != 0)
         report_error("initialise", "Error opening clover.in file");
 
-      fputs("*clover\n"
-            " state 1 density=0.2 energy=1.0\n"
-            " state 2 density=1.0 energy=2.5 geometry=rectangle xmin=0.0"
-            " xmax=5.0 ymin=0.0 ymax=2.0\n"
-            " x_cells=10\n"
-            " y_cells=2\n"
-            " xmin=0.0\n"
-            " ymin=0.0\n"
-            " xmax=10.0\n"
-            " ymax=2.0\n"
-            " initial_timestep=0.04\n"
-            " timestep_rise=1.5\n"
-            " max_timestep=0.04\n"
-            " end_time=3.0\n"
-            " test_problem 1\n"
-            "*endclover\n",
-            out_unit);
+      fputs(
+          "*clover\n"
+          " state 1 density=0.2 energy=1.0\n"
+          " state 2 density=1.0 energy=2.5 geometry=rectangle xmin=0.0"
+          " xmax=5.0 ymin=0.0 ymax=2.0\n"
+          " x_cells=10\n"
+          " y_cells=2\n"
+          " xmin=0.0\n"
+          " ymin=0.0\n"
+          " xmax=10.0\n"
+          " ymax=2.0\n"
+          " initial_timestep=0.04\n"
+          " timestep_rise=1.5\n"
+          " max_timestep=0.04\n"
+          " end_time=3.0\n"
+          " test_problem 1\n"
+          "*endclover\n",
+          out_unit
+      );
 
       fclose(out_unit);
       uin = fopen("clover.in", "r");

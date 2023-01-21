@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Niccolò Betto
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "clover.h"
 #include "data.h"
 #include "definitions.h"
@@ -8,9 +12,6 @@
 #include "report.h"
 #include "utils/math.h"
 #include "utils/timer.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 void timestep();
 
@@ -44,17 +45,17 @@ void hydro() {
     if (summary_frequency != 0 && step % summary_frequency == 0)
       field_summary();
 
-      if (visit_frequency != 0 && step % visit_frequency == 0)
-        visit();
+    if (visit_frequency != 0 && step % visit_frequency == 0)
+      visit();
 
-        // Sometimes there can be a significant start up cost that appears in the first step.
-        // Sometimes it is due to the number of MPI tasks, or OpenCL kernel compilation.
-        // On the short test runs, this can skew the results, so should be taken into account
-        // in recorded run times.
-        if (step == 1)
-          first_step = timer() - step_time;
-        else if (step == 2)
-          second_step = timer() - step_time;
+    // Sometimes there can be a significant start up cost that appears in the first step.
+    // Sometimes it is due to the number of MPI tasks, or OpenCL kernel compilation.
+    // On the short test runs, this can skew the results, so should be taken into account
+    // in recorded run times.
+    if (step == 1)
+      first_step = timer() - step_time;
+    else if (step == 2)
+      second_step = timer() - step_time;
 
     if (time_val + G_SMALL > end_time || step >= end_step) {
       complete = true;
@@ -62,7 +63,7 @@ void hydro() {
       if (visit_frequency != 0)
         visit();
 
-        wall_clock = timer() - timerstart;
+      wall_clock = timer() - timerstart;
       if (parallel.boss) {
         fprintf(g_out, "\nCalculation completed\n");
         fprintf(g_out, "Clover is finishing\n");
@@ -165,7 +166,6 @@ void timestep() {
 
   dt = min(dt, min((dtold * dtrise), dtmax));
 
-  clover_min(dt);
   if (profiler_on)
     profiler.timestep += timer() - kernel_time;
 
