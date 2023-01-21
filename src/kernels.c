@@ -126,43 +126,43 @@ void update_halo(int fields[static NUM_FIELDS], int depth) {
   if (profiler_on) {
     profiler.tile_halo_exchange += timer() - kernel_time;
     kernel_time = timer();
-
-    if (chunk.chunk_neighbours[CHUNK_LEFT] == EXTERNAL_FACE || chunk.chunk_neighbours[CHUNK_RIGHT] == EXTERNAL_FACE ||
-        chunk.chunk_neighbours[CHUNK_BOTTOM] == EXTERNAL_FACE || chunk.chunk_neighbours[CHUNK_TOP] == EXTERNAL_FACE) {
-      for (int tile = 0; tile < tiles_per_chunk; tile++) {
-        tile_type *cur_tile = &chunk.tiles[tile];
-
-        kernel_update_halo(
-            cur_tile->t_xmin,
-            cur_tile->t_xmax,
-            cur_tile->t_ymin,
-            cur_tile->t_ymax,
-            chunk.chunk_neighbours,
-            cur_tile->tile_neighbours,
-            cur_tile->field.density0,
-            cur_tile->field.energy0,
-            cur_tile->field.pressure,
-            cur_tile->field.viscosity,
-            cur_tile->field.soundspeed,
-            cur_tile->field.density1,
-            cur_tile->field.energy1,
-            cur_tile->field.xvel0,
-            cur_tile->field.yvel0,
-            cur_tile->field.xvel1,
-            cur_tile->field.yvel1,
-            cur_tile->field.vol_flux_x,
-            cur_tile->field.vol_flux_y,
-            cur_tile->field.mass_flux_x,
-            cur_tile->field.mass_flux_y,
-            fields,
-            depth
-        );
-      }
-    }
-
-    if (profiler_on)
-      profiler.self_halo_exchange += timer() - kernel_time;
   }
+
+  if (chunk.chunk_neighbours[CHUNK_LEFT] == EXTERNAL_FACE || chunk.chunk_neighbours[CHUNK_RIGHT] == EXTERNAL_FACE ||
+      chunk.chunk_neighbours[CHUNK_BOTTOM] == EXTERNAL_FACE || chunk.chunk_neighbours[CHUNK_TOP] == EXTERNAL_FACE) {
+    for (int tile = 0; tile < tiles_per_chunk; tile++) {
+      tile_type *cur_tile = &chunk.tiles[tile];
+
+      kernel_update_halo(
+          cur_tile->t_xmin,
+          cur_tile->t_xmax,
+          cur_tile->t_ymin,
+          cur_tile->t_ymax,
+          chunk.chunk_neighbours,
+          cur_tile->tile_neighbours,
+          cur_tile->field.density0,
+          cur_tile->field.energy0,
+          cur_tile->field.pressure,
+          cur_tile->field.viscosity,
+          cur_tile->field.soundspeed,
+          cur_tile->field.density1,
+          cur_tile->field.energy1,
+          cur_tile->field.xvel0,
+          cur_tile->field.yvel0,
+          cur_tile->field.xvel1,
+          cur_tile->field.yvel1,
+          cur_tile->field.vol_flux_x,
+          cur_tile->field.vol_flux_y,
+          cur_tile->field.mass_flux_x,
+          cur_tile->field.mass_flux_y,
+          fields,
+          depth
+      );
+    }
+  }
+
+  if (profiler_on)
+    profiler.self_halo_exchange += timer() - kernel_time;
 }
 
 void field_summary() {
@@ -188,9 +188,8 @@ void field_summary() {
     );
   }
 
-  if (profiler_on) {
+  if (profiler_on)
     kernel_time = timer();
-  }
 
   for (int tile = 0; tile < tiles_per_chunk; tile++) ideal_gas(tile, false);
 
@@ -375,6 +374,7 @@ void calc_dt(
 
 void PdV(bool predict) {
   double kernel_time;
+  int fields[NUM_FIELDS];
 
   if (profiler_on)
     kernel_time = timer();
