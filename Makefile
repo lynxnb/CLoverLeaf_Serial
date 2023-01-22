@@ -63,17 +63,23 @@ CC_MARKER = $(BUILD_DIR)/$(CC).built
 # Compiler flags
 #-----------------------------------------------------
 
+CFLAGS_ 		 = -O3 -march=native -funroll-loops
+CFLAGS_cc    = -O3 -march=native -funroll-loops
 CFLAGS_gcc   = -O3 -march=native -funroll-loops
 CFLAGS_clang = -O3 -march=native -funroll-loops
 CFLAGS_taffo = -O3 -march=native -funroll-loops
 
 ifdef DEBUG
-  CFLAGS_gcc   = -Og -g -Wall -Wextra -fbounds-check
-  CFLAGS_clang = -Og -g -Wall -Wextra -fbounds-check
-  CFLAGS_taffo = -Og -g -Wall -Wextra -fbounds-check
+	CFLAGS_			 = -Og -g -fbounds-check
+	CFLAGS_cc    = -Og -g -fbounds-check
+  CFLAGS_gcc   = -Og -g -fbounds-check
+  CFLAGS_clang = -Og -g -fbounds-check
+  CFLAGS_taffo = -Og -g -fbounds-check
 endif
 
 ifdef IEEE
+	I3E_          = -ffloat-store
+	I3E_cc        = -ffloat-store
   I3E_gcc       = -ffloat-store
   I3E_clang     = -ffloat-store
   I3E_taffo     = -ffloat-store
