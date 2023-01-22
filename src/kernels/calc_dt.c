@@ -141,10 +141,10 @@ void kernel_calc_dt(
   // Extract the mimimum timestep information
   dtl_control = 10.01 * (jk_control - (int)(jk_control));
   jk_control = jk_control - (jk_control - (int)(jk_control));
-  j_ldt = 1;  // MOD(INT(jk_control),x_max)
-  k_ldt = 1;  // 1+(jk_control/x_max)
-  // xl_pos=cellx[FTNREF1D(j_ldt,xmin-2)];
-  // yl_pos=celly[FTNREF1D(j_ldt,ymin-2)];
+  j_ldt = (int)jk_control % x_max;
+  k_ldt = 1 + (jk_control / x_max);
+  xl_pos = cellx[FTNREF1D(j_ldt, x_min - 2)];
+  yl_pos = celly[FTNREF1D(j_ldt, y_min - 2)];
 
   if (dt_min_val < min_dt)
     small = 1;
