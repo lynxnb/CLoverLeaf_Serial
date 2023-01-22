@@ -119,7 +119,7 @@ void initialise() {
   start();
 
   if (parallel.boss)
-    fputs("Starting the calculation", g_out);
+    fputs("Starting the calculation\n", g_out);
 
   fclose(g_in);
 }
@@ -150,7 +150,7 @@ void read_input() {
   complete = false;
 
   visit_frequency = 0;
-  summary_frequency = 0;
+  summary_frequency = 10;
 
   tiles_per_chunk = 1;
 
@@ -338,7 +338,7 @@ void read_input() {
           state = parse_getival(parse_getword(true)) - 1;
 
           if (parallel.boss) {
-            fprintf(g_out, "Reading specification for state %d\n\n", state);
+            fprintf(g_out, "Reading specification for state %d\n\n", state + 1);
             if (states[state].defined)
               report_error("read_input", "State defined twice.");  
           }
@@ -474,7 +474,7 @@ void start() {
   bool profiler_off;
 
   if (parallel.boss) {
-    fputs("Setting up initial geometry\n", g_out);
+    fputs("\nSetting up initial geometry\n", g_out);
   }
 
   time_val = 0.0;
@@ -513,7 +513,7 @@ void start() {
   clover_allocate_buffers();
 
   if (parallel.boss)
-    fputs("Generating chunks", g_out);
+    fputs("\nGenerating chunks\n", g_out);
 
   for (int tile = 0; tile < tiles_per_chunk; tile++) {
     initialise_chunk(tile);
@@ -545,7 +545,7 @@ void start() {
   update_halo(fields, 2);
 
   if (parallel.boss)
-    fputs("\nProblem initalised and generated", g_out);
+    fputs("\nProblem initalised and generated\n", g_out);
 
   field_summary();
 

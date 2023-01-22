@@ -15,8 +15,8 @@
 void initialise_chunk(int tile) {
   tile_type *tile_ptr = &chunk.tiles[tile];
 
-  double dx = grid.xmax - grid.xmin / (double)grid.x_cells;
-  double dy = grid.ymax - grid.ymin / (double)grid.y_cells;
+  double dx = (grid.xmax - grid.xmin) / (double)grid.x_cells;
+  double dy = (grid.ymax - grid.ymin) / (double)grid.y_cells;
 
   double xmin = grid.xmin + dx * (double)(tile_ptr->t_left - 1);
   double ymin = grid.ymin + dy * (double)(tile_ptr->t_bottom - 1);
@@ -58,7 +58,7 @@ void generate_chunk(int tile) {
   double state_radius[number_of_states];
   int state_geometry[number_of_states];
 
-  for (int state = 0; state <= number_of_states; state++) {
+  for (int state = 0; state < number_of_states; state++) {
     state_density[state] = states[state].density;
     state_energy[state] = states[state].energy;
     state_xvel[state] = states[state].xvel;
@@ -381,11 +381,11 @@ void field_summary() {
   double kernel_time;
 
   if (parallel.boss) {
-    fprintf(g_out, "\nTime %ld\n", time(NULL));
+    fprintf(g_out, "\nTime %4.16f\n", time_val);
     // Print table header row with column width 16
     fprintf(
         g_out,
-        "             %-22s %-22s %-22s %-22s %-22s %-22s %-22s",
+        "            %16s%16s%16s%16s%16s%16s%16s\n",
         "Volume",
         "Mass",
         "Density",
@@ -417,7 +417,7 @@ void field_summary() {
     tile_type *cur_tile = &chunk.tiles[tile];
 
     kernel_field_summary(
-        chunk.tiles[tile].t_xmin,
+        cur_tile->t_xmin,
         cur_tile->t_xmax,
         cur_tile->t_ymin,
         cur_tile->t_ymax,
@@ -447,7 +447,7 @@ void field_summary() {
   if (parallel.boss) {
     fprintf(
         g_out,
-        " step:%7d %22.4e %22.4e %22.4e %22.4e %22.4e %22.4e %22.4e\n",
+        "step:%7d%16.4e%16.4e%16.4e%16.4e%16.4e%16.4e%16.4e\n\n",
         step,
         t_vol,
         t_mass,
@@ -484,15 +484,15 @@ void field_summary() {
 
     qa_diff = fabs((100.0 * (t_ke / ke_constant)) - 100.0);
 
-    printf("Test problem %4d is within %16.7e%% of the expected solution\n", test_problem, qa_diff);
-    fprintf(g_out, "Test problem %4d is within %16.7e%% of the expected solution\n", test_problem, qa_diff);
+    printf("\nTest problem %4d is within %16.7e%% of the expected solution\n", test_problem, qa_diff);
+    fprintf(g_out, "\nTest problem %4d is within %16.7e%% of the expected solution\n", test_problem, qa_diff);
 
     if (qa_diff < 0.001) {
-      puts("This test is considered PASSED");
-      fputs("This test is considered PASSED", g_out);
+      puts("This test is considered PASSED\n");
+      fputs("This test is considered PASSED\n", g_out);
     } else {
-      puts("This test is considered NOT PASSED");
-      fputs("This test is considered NOT PASSED", g_out);
+      puts("This test is considered NOT PASSED\n");
+      fputs("This test is considered NOT PASSED\n", g_out);
     }
   }
 }

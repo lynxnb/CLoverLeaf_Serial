@@ -66,11 +66,11 @@ void hydro() {
       if (parallel.boss) {
         fprintf(g_out, "\nCalculation completed\n");
         fprintf(g_out, "Clover is finishing\n");
-        fprintf(g_out, "Wall clock %f\n", wall_clock);
-        fprintf(g_out, "First step overhead %f\n", first_step - second_step);
+        fprintf(g_out, "Wall clock %.16f\n", wall_clock);
+        fprintf(g_out, "First step overhead %.16f\n", first_step - second_step);
 
-        printf("Wall clock %f\n", wall_clock);
-        printf("First step overhead %f\n", first_step - second_step);
+        printf("Wall clock %.16f\n", wall_clock);
+        printf("First step overhead %.16f\n", first_step - second_step);
       }
 
       if (profiler_on) {
@@ -212,7 +212,7 @@ void timestep() {
     small = 1;
 
   if (parallel.boss) {
-    const char *format = " Step %7d time %11.7lf control %11s timestep  %9.2e%8d, %8d x %9.2e y %9.2e";
+    const char *format = "Step %7d time %11.7lf control %10s  timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n";
     fprintf(g_out, format, step, time_val, dt_control, dt, jdt, kdt, x_pos, y_pos);
     printf(format, step, time_val, dt_control, dt, jdt, kdt, x_pos, y_pos);
   }
