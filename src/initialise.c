@@ -121,7 +121,8 @@ void initialise() {
   if (parallel.boss)
     fputs("Starting the calculation\n", g_out);
 
-  fclose(g_in);
+  if (fclose(g_in) == 0)
+    g_in = NULL;
 }
 
 /**

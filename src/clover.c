@@ -22,11 +22,15 @@ void clover_init_comms() {
 }
 
 void clover_finalize() {
-  if (g_in != NULL)
-    fclose(g_in);
+  if (g_in != NULL) {
+    if (fclose(g_in) == 0)
+      g_in = NULL;
+  }
 
-  if (g_out != NULL)
-    fclose(g_out);
+  if (g_out != NULL) {
+    if (fclose(g_out) == 0)
+      g_out = NULL;
+  }
 }
 
 void clover_abort() {
