@@ -562,7 +562,7 @@ void calc_dt(
       yl_pos,
       jldt,
       kldt,
-      &small
+      small
   );
 
   switch (l_control) {

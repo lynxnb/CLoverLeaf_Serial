@@ -60,7 +60,7 @@ void kernel_calc_dt(
     double *ylpos,
     int *jldt,
     int *kldt,
-    int *smll
+    int small
 ) {
   double dt_min_val = *dtminval;
   int dtl_control = *dtlcontrol;
@@ -68,7 +68,6 @@ void kernel_calc_dt(
   double yl_pos = *ylpos;
   int j_ldt = *jldt;
   int k_ldt = *kldt;
-  int small = *smll;
 
   int j, k;
 

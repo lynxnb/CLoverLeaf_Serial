@@ -149,7 +149,7 @@ extern void kernel_calc_dt(
     double *ylpos,
     int *jldt,
     int *kldt,
-    int *smll
+    int smll
 );
 
 extern void kernel_pdv(

@@ -66,11 +66,11 @@ void hydro() {
       if (parallel.boss) {
         fprintf(g_out, "\nCalculation completed\n");
         fprintf(g_out, "Clover is finishing\n");
-        fprintf(g_out, "Wall clock %.16f\n", wall_clock);
-        fprintf(g_out, "First step overhead %.16f\n", first_step - second_step);
+        fprintf(g_out, "Wall clock     %.16f\n", wall_clock);
+        fprintf(g_out, "First step overhead   %.16f\n", first_step - second_step);
 
-        printf("Wall clock %.16f\n", wall_clock);
-        printf("First step overhead %.16f\n", first_step - second_step);
+        printf("Wall clock    %.16f\n", wall_clock);
+        printf("First step overhead   %.16f\n", first_step - second_step);
       }
 
       if (profiler_on) {
@@ -125,18 +125,18 @@ void hydro() {
       wall_clock = timer() - timerstart;
       step_clock = timer() - step_time;
 
-      fprintf(g_out, "Wall clock %f\n", wall_clock);
-      printf("Wall clock %f\n", wall_clock);
+      fprintf(g_out, "Wall clock    %.16f\n", wall_clock);
+      printf("Wall clock    %.16f\n", wall_clock);
 
       cells = grid.x_cells * grid.y_cells;
-      rstep = step;
+      rstep = step + 1;
       grind_time = wall_clock / (rstep * cells);
       step_grind = step_clock / cells;
 
-      fprintf(g_out, "Average time per cell %f\n", grind_time);
-      fprintf(g_out, "Step time per cell %f\n", step_grind);
-      printf("Average time per cell %f\n", grind_time);
-      printf("Step time per cell %f\n", step_grind);
+      fprintf(g_out, "Average time per cell    %.16e\n", grind_time);
+      fprintf(g_out, "Step time per cell       %.16e\n", step_grind);
+      printf("Average time per cell    %.16e\n", grind_time);
+      printf("Step time per cell       %.16e\n", step_grind);
     }
   }
 }
@@ -193,7 +193,7 @@ void timestep() {
   for (tile = 0; tile < tiles_per_chunk; tile++) {
     calc_dt(tile, &dtlp, dtl_control, &xl_pos, &yl_pos, &jldt, &kldt);
 
-    if (dtlp < dt) {
+    if (dtlp <= dt) {
       dt = dtlp;
       strcpy(dt_control, dtl_control);
       x_pos = xl_pos;
@@ -212,7 +212,7 @@ void timestep() {
     small = 1;
 
   if (parallel.boss) {
-    const char *format = "Step %7d time %11.7lf control %10s  timestep  %9.2e%8d, %8d x %9.2e y %9.2e\n";
+    const char *format = "Step %7d time %.7lf control %10s  timestep  %.2e%8d, %8d x  %.2e y  %.2e\n";
     fprintf(g_out, format, step, time_val, dt_control, dt, jdt, kdt, x_pos, y_pos);
     printf(format, step, time_val, dt_control, dt, jdt, kdt, x_pos, y_pos);
   }
