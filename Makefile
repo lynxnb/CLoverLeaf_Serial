@@ -38,7 +38,7 @@ BIN_DIR = .
 # Source files
 #-----------------------------------------------------
 
-# Target specific file exclusions
+# Target-specific file exclusions
 CLOVER_EXCLUDE = $(SRC)/tests.c
 TEST_EXCLUDE = $(SRC)/clover_leaf.c\
                $(SRC)/report.c

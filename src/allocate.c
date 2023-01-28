@@ -160,49 +160,53 @@ void build_field() {
     // are allocated. This prevents first touch overheads in the main code
     // cycle which can skew timings in the first step
 
+    int stride = (cur_tile->t_xmax + 3) - (cur_tile->t_xmin - 2) + 1;
     for (k = 0; k <= (cur_tile->t_ymax + 3) - (cur_tile->t_ymin - 2); k++) {
       for (j = 0; j <= (cur_tile->t_xmax + 3) - (cur_tile->t_xmin - 2); j++) {
-        cur_field->work_array1[k, j] = 0.0;
-        cur_field->work_array2[k, j] = 0.0;
-        cur_field->work_array3[k, j] = 0.0;
-        cur_field->work_array4[k, j] = 0.0;
-        cur_field->work_array5[k, j] = 0.0;
-        cur_field->work_array6[k, j] = 0.0;
-        cur_field->work_array7[k, j] = 0.0;
+        cur_field->work_array1[k * stride + j] = 0.0;
+        cur_field->work_array2[k * stride + j] = 0.0;
+        cur_field->work_array3[k * stride + j] = 0.0;
+        cur_field->work_array4[k * stride + j] = 0.0;
+        cur_field->work_array5[k * stride + j] = 0.0;
+        cur_field->work_array6[k * stride + j] = 0.0;
+        cur_field->work_array7[k * stride + j] = 0.0;
 
-        cur_field->xvel0[k, j] = 0.0;
-        cur_field->xvel1[k, j] = 0.0;
-        cur_field->yvel0[k, j] = 0.0;
-        cur_field->yvel1[k, j] = 0.0;
+        cur_field->xvel0[k * stride + j] = 0.0;
+        cur_field->xvel1[k * stride + j] = 0.0;
+        cur_field->yvel0[k * stride + j] = 0.0;
+        cur_field->yvel1[k * stride + j] = 0.0;
       }
     }
 
+    stride = (cur_tile->t_xmax + 2) - (cur_tile->t_xmin - 2) + 1;
     for (k = 0; k <= (cur_tile->t_ymax + 2) - (cur_tile->t_ymin - 2); k++) {
       for (j = 0; j <= (cur_tile->t_xmax + 2) - (cur_tile->t_xmin - 2); j++) {
-        cur_field->density0[k, j] = 0.0;
-        cur_field->density1[k, j] = 0.0;
-        cur_field->energy0[k, j] = 0.0;
-        cur_field->energy1[k, j] = 0.0;
-        cur_field->pressure[k, j] = 0.0;
-        cur_field->viscosity[k, j] = 0.0;
-        cur_field->soundspeed[k, j] = 0.0;
-        cur_field->volume[k, j] = 0.0;
+        cur_field->density0[k * stride + j] = 0.0;
+        cur_field->density1[k * stride + j] = 0.0;
+        cur_field->energy0[k * stride + j] = 0.0;
+        cur_field->energy1[k * stride + j] = 0.0;
+        cur_field->pressure[k * stride + j] = 0.0;
+        cur_field->viscosity[k * stride + j] = 0.0;
+        cur_field->soundspeed[k * stride + j] = 0.0;
+        cur_field->volume[k * stride + j] = 0.0;
       }
     }
 
+    stride = (cur_tile->t_xmax + 3) - (cur_tile->t_xmin - 2) + 1;
     for (k = 0; k <= (cur_tile->t_ymax + 2) - (cur_tile->t_ymin - 2); k++) {
       for (j = 0; j <= (cur_tile->t_xmax + 3) - (cur_tile->t_xmin - 2); j++) {
-        cur_field->vol_flux_x[k, j] = 0.0;
-        cur_field->mass_flux_x[k, j] = 0.0;
-        cur_field->xarea[k, j] = 0.0;
+        cur_field->vol_flux_x[k * stride + j] = 0.0;
+        cur_field->mass_flux_x[k * stride + j] = 0.0;
+        cur_field->xarea[k * stride + j] = 0.0;
       }
     }
 
+    stride = (cur_tile->t_xmax + 2) - (cur_tile->t_xmin - 2) + 1;
     for (k = 0; k <= (cur_tile->t_ymax + 3) - (cur_tile->t_ymin - 2); k++) {
       for (j = 0; j <= (cur_tile->t_xmax + 2) - (cur_tile->t_xmin - 2); j++) {
-        cur_field->vol_flux_y[k, j] = 0.0;
-        cur_field->mass_flux_y[k, j] = 0.0;
-        cur_field->yarea[k, j] = 0.0;
+        cur_field->vol_flux_y[k * stride + j] = 0.0;
+        cur_field->mass_flux_y[k * stride + j] = 0.0;
+        cur_field->yarea[k * stride + j] = 0.0;
       }
     }
 
