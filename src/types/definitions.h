@@ -101,16 +101,6 @@ typedef struct chunk_type_t {
   int task;
   int chunk_neighbours[4];
 
-  double *left_rcv_buffer;    // 1D array
-  double *right_rcv_buffer;   // 1D array
-  double *bottom_rcv_buffer;  // 1D array
-  double *top_rcv_buffer;     // 1D array
-
-  double *left_snd_buffer;    // 1D array
-  double *right_snd_buffer;   // 1D array
-  double *bottom_snd_buffer;  // 1D array
-  double *top_snd_buffer;     // 1D array
-
   tile_type *tiles;  // 1D array
 
   int x_min;

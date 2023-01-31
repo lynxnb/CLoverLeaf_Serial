@@ -511,8 +511,6 @@ void start() {
 
   build_field();
 
-  clover_allocate_buffers();
-
   if (parallel.boss)
     fputs("\nGenerating chunks\n", g_out);
 
