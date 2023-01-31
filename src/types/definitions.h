@@ -14,7 +14,7 @@ typedef struct state_type_t {
   double ymin;
   double ymax;
   double radius;
-} state_type;
+} state_type; // 88 bytes
 
 typedef struct grid_type_t {
   double xmin;
@@ -23,7 +23,7 @@ typedef struct grid_type_t {
   double ymax;
   int x_cells;
   int y_cells;
-} grid_type;
+} grid_type; // 40 bytes
 
 typedef struct profiler_type_t {
   double timestep;
@@ -41,7 +41,7 @@ typedef struct profiler_type_t {
   double tile_halo_exchange;
   double self_halo_exchange;
   double mpi_halo_exchange;
-} profiler_type;
+} profiler_type; // 120 bytes
 
 typedef struct field_type_t {
   double *density0;     // 2D array
@@ -79,7 +79,7 @@ typedef struct field_type_t {
   double *volume;  // 2D array
   double *xarea;   // 2D array
   double *yarea;   // 2D array
-} field_type;
+} field_type; // 264 bytes
 
 typedef struct tile_type_t {
   field_type field;
@@ -95,7 +95,7 @@ typedef struct tile_type_t {
   int t_right;
   int t_bottom;
   int t_top;
-} tile_type;
+} tile_type; // 328 bytes
 
 typedef struct chunk_type_t {
   int task;
@@ -116,4 +116,4 @@ typedef struct chunk_type_t {
   int right_boundary;
   int bottom_boundary;
   int top_boundary;
-} chunk_type;
+} chunk_type; // 80 bytes
