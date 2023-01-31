@@ -10,6 +10,7 @@
 #include "definitions.h"
 #include "kernels.h"
 #include "report.h"
+#include "user_callbacks.h"
 #include "utils/math.h"
 #include "utils/timer.h"
 
@@ -23,11 +24,15 @@ void hydro() {
   double first_step, second_step;
   double kerner_total;
 
+  hydro_init();
+
   timerstart = timer();
 
   while (true) {
     step_time = timer();
     step++;
+
+    hydro_foreach_step(step);
 
     timestep();
     PdV(true);
@@ -117,6 +122,7 @@ void hydro() {
         }
       }
 
+      hydro_done();
       clover_finalize();
       exit(0);
     }
