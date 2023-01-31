@@ -10,6 +10,8 @@
 
 #include <stdbool.h>
 
+#include "types/data.h"
+
 extern void initialise_chunk(int tile);
 
 extern void generate_chunk(int tile);

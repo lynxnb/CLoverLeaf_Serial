@@ -6,8 +6,8 @@
 
 # By default gcc will be used. The major compilers have custom flags available.
 #
-#  export CC=gcc       		# to select the gcc compiler
-#  export CC=clang       	# to select the clang compiler
+#  export CC=gcc          # to select the gcc compiler
+#  export CC=clang        # to select the clang compiler
 #
 # or this works as well:
 #
@@ -17,10 +17,11 @@
 # usage: make                     # Will make all binaries (clover_leaf, test)
 #        make clean               # Will clean up the directory
 #        make clover_leaf         # Will make the clover_leaf binary
-# 			 make test                # Will make the test binary
-# 			 make run                 # Will make and run the clover_leaf binary
-# 			 make run-test            # Will make and run the test binary
+#        make test                # Will make the test binary
+#        make run                 # Will make and run the clover_leaf binary
+#        make run-test            # Will make and run the test binary
 #        make DEBUG=1             # Will select debug flags
+#        make USER_CALLBACKS=1    # Will compile with user callbacks enabled (see user_callbacks.h)
 # e.g. make CC=clang DEBUG=1 # will compile with the clang compiler with clang debug flags
 
 SRC = src
@@ -40,7 +41,7 @@ BIN_DIR = .
 
 # Target-specific file exclusions
 CLOVER_EXCLUDE = $(SRC)/tests.c\
-							 $(SRC)/tests.h
+                 $(SRC)/tests.h
 TEST_EXCLUDE = $(SRC)/clover_leaf.c\
                $(SRC)/report.c
 
@@ -82,6 +83,10 @@ endif
 LIBS = -lm
 
 CFLAGS += $(I3E)
+
+ifdef USER_CALLBACKS
+	CFLAGS += -DUSER_CALLBACKS_ENABLED
+endif
 
 #-----------------------------------------------------
 # Targets
