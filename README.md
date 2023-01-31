@@ -1,65 +1,36 @@
-# CloverLeaf_Serial
+# CLoverLeaf_Serial
 
-This is the serial version of CloverLeaf version 1.3. With all OpenMP and MPI removed.
+A C port of the serial (no-MPI) version of CloverLeaf, for use with [TAFFO](https://github.com/TAFFO-org/TAFFO) (Tuning Assistant for Floating Point to Fixed Point Optimization).
 
-## Release Notes
-
-### Version 1.3
-
-CloverLeaf 1.3 contains a number of optimisations over previous releases.
-These include a number of loop fusion optimisations and the use of scalar variables over work arrays.
-Overall this improves cache efficiency.
-
-This version also contains some support for explicit tiling.
-This is activated through the two input deck parameters:
-* `tiles_per_chunk` To specify how many tiles per MPI ranks there are.
-* `tiles_per_problem` To specify how many global tiles there are, this is rounded down to be an even number per MPI rank.
-
-
-For compilation we now use the native Fortran and C compilers, not the MPI wrappers as before.
-However specific compilation can be obtained with their use:
-
-`make COMPILER=GNU MPI_COMPILER=gfortran C_MPI_COMPILER=gcc`
+Original repository: [UK-MAC/CloverLeaf_Serial](https://github.com/UK-MAC/CloverLeaf_Serial)
 
 ## Performance
 
-Expected performance is give below.
+Performance should be on par with the Fortran version using C kernels.
 
-If you do not see this performance, or you see variability, then is it recommended that you check MPI task placement and OpenMP thread affinities, because it is essential these are pinned and placed optimally to obtain best performance.
+## Building
 
-Note that performance can depend on compiler (brand and release), memory speed, system settings (e.g. turbo, huge pages), system load etc. 
+Building is done using GNU Make. See the Makefile available targets and options.
 
-### Performance Table
+## Motivation
 
-| Test Problem  | Time                         | Time                        | Time                        |
-| ------------- |:----------------------------:|:---------------------------:|:---------------------------:|
-| Hardware      |  E5-2670 0 @ 2.60GHz Core    | E5-2670 0 @ 2.60GHz Node    | E5-2698 v3 @ 2.30GHz Node   |
-| Options       |  make COMPILER=INTEL         | make COMPILER=INTEL         | make COMPILER=CRAY          |
-| Options       |  mpirun -np 1                | mpirun -np 16               | aprun -n4 -N4 -d8           |
-| 2             | 20.0                         | 2.5                         | 0.9                         |
-| 3             | 960.0                        | 100.0                       |                             |
-| 4             | 460.0                        | 40.0                        | 23.44                       |
-| 5             | 13000.0                      | 1700.0                      |                             |
+This port was created as part of an individual university project.
+The goal of the project was to apply TAFFO annotations to the CloverLeaf benchmark, to compare the possible peformance gains from replacing floating point variables with fixed point ones.
+As TAFFO only supports C/C++, a C port of CloverLeaf was needed. The port was done by hand, without the use of any automatic tools.
+It should also be feature complete with the Fortran version, and an attempt was made to keep both the code and the output as similar as possible.
+For this reason, possible performance optimizations were not performed (e.g. replacing the indexing macros in the kernels).
 
-### Weak Scaling - Test 4
+## TAFFO Usage
 
-| Node Count | Time         |
-| ---------- |:------------:|
-| 1          |   40.0       |
-| 2          |              |
-| 4          |              |
-| 8          |              |
-| 16         |              |
+To ease the process of annotating the code, an effort was made to be able to generate annotations automatically.
+A rudimental usage tracker is able to periodically collect data about the program's working arrays, thus being able to report the minimum and maximum values used per-array.
+It can then print out those values as a human-readable report, or as ready-to-use TAFFO annotations, which can then be applied to the code directly.
 
+To enable the usage tracker, user callbacks need to be enabled at compile time:
+```bash
+make USER_CALLBACKS=1
+```
+Usage info will be saved to the `usage_tracker.txt` file.
 
-### Strong Scaling - Test 5
-
-| Node Count | Time          | Speed Up |
-| ---------- |:-------------:|:--------:|
-| 1          |   1700        |  1.0     |
-| 2          |               |          |
-| 4          |               |          |
-| 8          |               |          |
-| 16         |               |          |
-
-
+## User Callbacks
+User callbacks are functions that can be used to run custom code at specific execution points in the program, allowing for user defined code to be executed without having to modify the original source. For example, they are used to run the usage tracker.

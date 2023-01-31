@@ -2,8 +2,7 @@
 // Copyright (C) 2022 Niccolò Betto
 
 /*
- * Collection of functions that can be used to run custom code at specific execution points in the program
- * execution.
+ * Collection of functions that can be used to run custom code at specific execution points in the program.
  * By default, these functions are disabled from execution. To enable them, enable the USER_CALLBACKS toggle when
  * running make.
  */
