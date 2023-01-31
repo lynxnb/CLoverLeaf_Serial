@@ -15,22 +15,13 @@ void clover_init_comms() {
   parallel.task = rank;
 
   if (rank == 0)
-    parallel.boss = true;
+    parallel.boss = false;
 
   parallel.boss_task = 0;
   parallel.max_task = size;
 }
 
 void clover_finalize() {
-  if (g_in != NULL) {
-    if (fclose(g_in) == 0)
-      g_in = NULL;
-  }
-
-  if (g_out != NULL) {
-    if (fclose(g_out) == 0)
-      g_out = NULL;
-  }
 }
 
 void clover_abort() {

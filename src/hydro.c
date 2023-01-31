@@ -73,10 +73,9 @@ void hydro() {
         fprintf(g_out, "Clover is finishing\n");
         fprintf(g_out, "Wall clock     %.16f\n", wall_clock);
         fprintf(g_out, "First step overhead   %.16f\n", first_step - second_step);
-
-        printf("Wall clock    %.16f\n", wall_clock);
-        printf("First step overhead   %.16f\n", first_step - second_step);
       }
+      printf("Wall clock    %.16f\n", wall_clock);
+      printf("First step overhead   %.16f\n", first_step - second_step);
 
       if (profiler_on) {
         kerner_total = profiler.timestep + profiler.ideal_gas + profiler.viscosity + profiler.PdV + profiler.revert +

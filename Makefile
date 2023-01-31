@@ -22,6 +22,7 @@
 #        make run-test            # Will make and run the test binary
 #        make DEBUG=1             # Will select debug flags
 #        make USER_CALLBACKS=1    # Will compile with user callbacks enabled (see user_callbacks.h)
+#        make ARMv7=1             # Will compile for ARMv7
 # e.g. make CC=clang DEBUG=1 # will compile with the clang compiler with clang debug flags
 
 SRC = src
@@ -68,8 +69,16 @@ CC_MARKER = $(BUILD_DIR)/$(CC).built
 # Compiler flags
 #-----------------------------------------------------
 
-CFLAGS = -O3 -march=native -funroll-loops -Wno-attributes
+CFLAGS = -O3 -funroll-loops -Wno-attributes
 TAFFO_FLAGS = -Wno-unused-command-line-argument -temp-dir $(TAFFO_DIR)
+
+ifdef ARMv7
+	CC = arm-none-eabi-gcc
+	CFLAGS += -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+  TAFFO_FLAGS += -target arm-none-eabi --sysroot=/usr/lib/arm-none-eabi
+else
+	CFLAGS += -march=native
+endif
 
 ifdef DEBUG
 	CFLAGS = -Og -g -fbounds-check

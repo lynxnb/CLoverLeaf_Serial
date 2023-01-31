@@ -380,21 +380,18 @@ void field_summary() {
 
   double kernel_time;
 
-  if (parallel.boss) {
-    fprintf(g_out, "\nTime %4.16f\n", time_val);
-    // Print table header row with column width 16
-    fprintf(
-        g_out,
-        "            %16s%16s%16s%16s%16s%16s%16s\n",
-        "Volume",
-        "Mass",
-        "Density",
-        "Pressure",
-        "Internal Energy",
-        "Kinetic Energy",
-        "Total Energy"
-    );
-  }
+  printf("\nTime %4.16f\n", time_val);
+  // Print table header row with column width 16
+  printf(
+      "            %16s%16s%16s%16s%16s%16s%16s\n",
+      "Volume",
+      "Mass",
+      "Density",
+      "Pressure",
+      "Internal Energy",
+      "Kinetic Energy",
+      "Total Energy"
+  );
 
   if (profiler_on)
     kernel_time = timer();
@@ -444,22 +441,19 @@ void field_summary() {
   if (profiler_on)
     profiler.summary += timer() - kernel_time;
 
-  if (parallel.boss) {
-    fprintf(
-        g_out,
-        "step:%7d%16.4e%16.4e%16.4e%16.4e%16.4e%16.4e%16.4e\n\n",
-        step,
-        t_vol,
-        t_mass,
-        t_mass / t_vol,
-        t_press / t_vol,
-        t_ie,
-        t_ke,
-        t_ie + t_ke
-    );
-  }
+  printf(
+      "step:%7d%16.4e%16.4e%16.4e%16.4e%16.4e%16.4e%16.4e\n\n",
+      step,
+      t_vol,
+      t_mass,
+      t_mass / t_vol,
+      t_press / t_vol,
+      t_ie,
+      t_ke,
+      t_ie + t_ke
+  );
 
-  if (complete && parallel.boss && test_problem >= 1) {
+  if (complete && test_problem >= 1) {
     double ke_constant;
     switch (test_problem) {
       case 1:
@@ -491,14 +485,11 @@ void field_summary() {
     qa_diff = fabs((100.0 * (t_ke / ke_constant)) - 100.0);
 
     printf("\nTest problem %4d is within %16.7e%% of the expected solution\n", test_problem, qa_diff);
-    fprintf(g_out, "\nTest problem %4d is within %16.7e%% of the expected solution\n", test_problem, qa_diff);
 
     if (qa_diff < 0.001) {
       puts("This test is considered PASSED\n");
-      fputs("This test is considered PASSED\n", g_out);
     } else {
       puts("This test is considered NOT PASSED\n");
-      fputs("This test is considered NOT PASSED\n", g_out);
     }
   }
 }

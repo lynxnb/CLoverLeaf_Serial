@@ -36,80 +36,13 @@ void initialise() {
     errno = 0;
     g_out = fopen("clover.out", "w");
     if (errno != 0) {
-      g_out = NULL;
-      report_error("initialise", "Error opening clover.out file.");
+      g_out = stderr;
+      printf("Redirecting file output to stderr\n");
     }
 
     fprintf(g_out, "Clover Version %f\nMPI Version\nTask Count %d\n", G_VERSION, parallel.max_task);
 
     puts("Output file clover.out opened. All output will go there.");
-
-    fputs("\nClover will run from the following input:-\n", g_out);
-
-    errno = 0;
-    uin = fopen("clover.in", "r");
-    if (errno != 0) {
-      errno = 0;
-      out_unit = fopen("clover.in", "w");
-      if (errno != 0)
-        report_error("initialise", "Error opening clover.in file");
-
-      fputs(
-          "*clover\n"
-          " state 1 density=0.2 energy=1.0\n"
-          " state 2 density=1.0 energy=2.5 geometry=rectangle xmin=0.0"
-          " xmax=5.0 ymin=0.0 ymax=2.0\n"
-          " x_cells=10\n"
-          " y_cells=2\n"
-          " xmin=0.0\n"
-          " ymin=0.0\n"
-          " xmax=10.0\n"
-          " ymax=2.0\n"
-          " initial_timestep=0.04\n"
-          " timestep_rise=1.5\n"
-          " max_timestep=0.04\n"
-          " end_time=3.0\n"
-          " test_problem 1\n"
-          "*endclover\n",
-          out_unit
-      );
-
-      fclose(out_unit);
-      uin = fopen("clover.in", "r");
-    }
-
-    errno = 0;
-    out_unit = fopen("clover.in.tmp", "w");
-    if (errno != 0)
-      report_error("initialise", "Error opening clover.in.tmp file");
-
-    int stat = parse_init(uin, "");
-    while (true) {
-      stat = parse_getline(-1);
-      if (stat != 0)
-        break;
-      fputs(line, out_unit);
-      fputc('\n', out_unit);
-    }
-    fclose(out_unit);
-  }
-
-  errno = 0;
-  g_in = fopen("clover.in.tmp", "r");
-  if (errno != 0)
-    report_error("initialise", "Error opening clover.in.tmp file");
-
-  if (parallel.boss) {
-    // Write input file to output file
-    rewind(uin);
-    char buf[100];
-    while (true) {
-      if (fgets(buf, 100, uin) == NULL)
-        break;
-      fputs(buf, g_out);
-    }
-
-    fputs("\nInitialising and generating\n\n", g_out);
   }
 
   read_input();
@@ -120,9 +53,6 @@ void initialise() {
 
   if (parallel.boss)
     fputs("Starting the calculation\n", g_out);
-
-  if (fclose(g_in) == 0)
-    g_in = NULL;
 }
 
 /**
@@ -135,19 +65,19 @@ void read_input() {
   double dx, dy;
   char *word;
 
-  test_problem = 0;
+  test_problem = 7;
   state_max = 0;
 
-  grid.xmin = 0.0;
-  grid.ymin = 0.0;
-  grid.ymax = 100.0;
-  grid.xmax = 100.0;
+  grid.xmin = 0.0;   // xmin
+  grid.ymin = 0.0;   // ymin
+  grid.ymax = 10.0;  // ymax
+  grid.xmax = 10.0;  // xmax
 
-  grid.x_cells = 10;
-  grid.y_cells = 10;
+  grid.x_cells = 19;  // x_cells
+  grid.y_cells = 19;  // y_cells
 
   end_time = 10.0;
-  end_step = G_IBIG;
+  end_step = 87;
   complete = false;
 
   visit_frequency = 0;
@@ -155,10 +85,10 @@ void read_input() {
 
   tiles_per_chunk = 1;
 
-  dtinit = 0.1;
-  dtmax = 1.0;
-  dtmin = 0.0000001;
-  dtrise = 1.5;
+  dtinit = 0.04;      // initial_timestep
+  dtmax = 0.04;       // max_timestep
+  dtmin = 0.0000001;  // min_timestep
+  dtrise = 1.5;       // timestep_rise
   dtc_safe = 0.7;
   dtu_safe = 0.5;
   dtv_safe = 0.5;
@@ -187,237 +117,20 @@ void read_input() {
   if (parallel.boss)
     fputs("Reading input file\n\n", g_out);
 
-  stat = parse_init(g_in, "*clover");
-
-  while (true) {
-    stat = parse_getline(0);
-    if (stat != 0)
-      break;
-    while (true) {
-      word = parse_getword(false);
-      if (!strcmp(word, ""))
-        break;
-
-      if (!strcmp(word, "state")) {
-        state_max = max(state_max, parse_getival(parse_getword(true)));
-        break;
-      }
-    }
-  }
-
-  number_of_states = state_max;
-
-  if (number_of_states < 1)
-    report_error("read_input", "No states defined.");
-
-  stat = parse_init(g_in, "*clover");
-
+  number_of_states = 2;
   states = calloc(number_of_states, sizeof(state_type));
 
-  while (true) {
-    stat = parse_getline(0);
-    if (stat != 0)
-      break;
+  states[0] = (state_type){.defined = true, .density = 0.2, .energy = 1.0};
 
-    while (true) {
-      word = parse_getword(false);
-      if (!strcmp(word, ""))
-        break;
-
-      // clang-format off
-      sswitch(word) {
-        scase("initial_timestep")
-          dtinit = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "initial timestep %lf\n", dtinit);
-          break;
-        scase("max_timestep")
-          dtmax = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "max timestep %lf\n", dtmax);
-          break;
-        scase("timestep_rise")
-          dtrise = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "timestep_rise %lf\n", dtrise);
-          break;
-        scase("end_time")
-          end_time = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "end_time %lf\n", end_time);
-          break;
-        scase("end_step")
-          end_step = parse_getival(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "end_step %d\n", end_step);
-          break;
-        scase("xmin")
-          grid.xmin = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "xmin %lf\n", grid.xmin);
-          break;
-        scase("xmax")
-          grid.xmax = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "xmax %lf\n", grid.xmax);
-          break;
-        scase("ymin")
-          grid.ymin = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "ymin %lf\n", grid.ymin);
-          break;
-        scase("ymax")
-          grid.ymax = parse_getrval(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "ymax %lf\n", grid.ymax);
-          break;
-        scase("x_cells")
-          grid.x_cells = parse_getival(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "x_cells %d\n", grid.x_cells);
-          break;
-        scase("y_cells")
-          grid.y_cells = parse_getival(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "y_cells %d\n", grid.y_cells);
-          break;
-        scase("visit_frequency")
-          visit_frequency = parse_getival(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "visit_frequency %d\n", visit_frequency);
-          break;
-        scase("summary_frequency")
-          summary_frequency = parse_getival(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "summary_frequency %d\n", summary_frequency);
-          break;
-        scase("tiles_per_chunk")
-          tiles_per_chunk = parse_getival(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "tiles_per_chunk %d\n", tiles_per_chunk);
-          break;
-        scase("tiles_per_problem")
-          tiles_per_chunk = parse_getival(parse_getword(true)) / parallel.max_task;
-          if (parallel.boss)
-            fprintf(g_out, "tiles_per_chunk %d\n", tiles_per_chunk);
-          break;
-        scase("use_fortran_kernels")
-          use_fortran_kernels = true;
-          use_C_kernels = false;
-          use_OA_kernels = false;
-          break;
-        scase("use_c_kernels")
-          use_fortran_kernels = false;
-          use_C_kernels = true;
-          use_OA_kernels = false;
-          break;
-        scase("use_oa_kernels")
-          use_fortran_kernels = false;
-          use_C_kernels = false;
-          use_OA_kernels = true;
-          break;
-        scase("profiler_on")
-          profiler_on = true;
-          if (parallel.boss)
-            fputs("Profiler_on\n", g_out);
-          break;
-        scase("test_problem")
-          test_problem = parse_getival(parse_getword(true));
-          if (parallel.boss)
-            fprintf(g_out, "test_problem %d\n", test_problem);
-          break;
-        scase("state")
-          // Subtract 1 because the state number in the input file is 1-based,
-          // but the state number in the code is 0-based
-          state = parse_getival(parse_getword(true)) - 1;
-
-          if (parallel.boss) {
-            fprintf(g_out, "Reading specification for state %d\n\n", state + 1);
-            if (states[state].defined)
-              report_error("read_input", "State defined twice.");  
-          }
-
-          states[state].defined = true;
-          while (true) {
-            word = parse_getword(false);
-            if (!strcmp(word, ""))
-              break;
-
-            sswitch(word) {
-              scase("xvel")
-                states[state].xvel = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "xvel %lf\n", states[state].xvel);
-                break;
-              scase("yvel")
-                states[state].yvel = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "yvel %lf\n", states[state].yvel);
-                break;
-              scase("xmin")
-                states[state].xmin = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "state xmin %lf\n", states[state].xmin);
-                break;
-              scase("ymin")
-                states[state].ymin = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "state ymin %lf\n", states[state].ymin);
-                break;
-              scase("xmax")
-                states[state].xmax = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "state xmax %lf\n", states[state].xmax);
-                break;
-              scase("ymax")
-                states[state].ymax = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "state ymax %lf\n", states[state].ymax);
-                break;
-              scase("radius")
-                states[state].radius = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "state radius %lf\n", states[state].radius);
-                break;
-              scase("density")
-                states[state].density = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "state density %lf\n", states[state].density);
-                break;
-              scase("energy")
-                states[state].energy = parse_getrval(parse_getword(true));
-                if (parallel.boss)
-                  fprintf(g_out, "state energy %lf\n", states[state].energy);
-                break;
-              scase("geometry")
-                word = trim(parse_getword(true));
-                sswitch(word) {
-                  scase("rectangle")
-                    states[state].geometry = G_RECT;
-                    if (parallel.boss)
-                      fputs("state geometry rectangular\n", g_out);
-                    break;
-                  scase("circle")
-                    states[state].geometry = G_CIRC;
-                    if (parallel.boss)
-                      fputs("state geometry circular\n", g_out);
-                    break;
-                  scase("point")
-                    states[state].geometry = G_POINT;
-                    if (parallel.boss)
-                      fputs("state geometry point\n", g_out);
-                    break;
-                } sswitch_end;
-            } sswitch_end; // state switch
-          } // case("state") while loop
-
-          if (parallel.boss)
-            fputc('\n', g_out);
-          break;
-      } sswitch_end;
-      // clang-format on
-    }
-  }
+  states[1] = (state_type){
+      .defined = true,
+      .density = 1.0,
+      .energy = 2.5,
+      .geometry = G_RECT,
+      .xmin = 0.0,
+      .xmax = 5.0,
+      .ymin = 0.0,
+      .ymax = 2.0};
 
   if (parallel.boss) {
     fputc('\n', g_out);
