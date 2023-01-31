@@ -212,14 +212,7 @@ void read_input() {
 
   stat = parse_init(g_in, "*clover");
 
-  states = malloc(number_of_states * sizeof(state_type));
-  for (int i = 0; i < number_of_states; i++) {
-    states[i].defined = false;
-    states[i].energy = 0.0;
-    states[i].density = 0.0;
-    states[i].xvel = 0.0;
-    states[i].yvel = 0.0;
-  }
+  states = calloc(number_of_states, sizeof(state_type));
 
   while (true) {
     stat = parse_getline(0);
