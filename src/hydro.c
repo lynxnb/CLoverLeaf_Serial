@@ -124,7 +124,7 @@ void hydro() {
 
       hydro_done();
       clover_finalize();
-      exit(0);
+      break;
     }
 
     if (parallel.boss) {
