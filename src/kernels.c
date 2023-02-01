@@ -477,8 +477,11 @@ void field_summary() {
       case 5:
         ke_constant = 4.85350315783719;
         break;
-      case 6: // same as test_problem 2 but with 20x20 cells
+      case 6:  // same as test_problem 2 but with 20x20 cells
         ke_constant = 4.78264618380410;
+        break;
+      case 7:  // same as test_problem 2 but with 19x19 cells
+        ke_constant = 5.23176218087986;
         break;
       default:
         ke_constant = 1.0;
