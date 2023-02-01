@@ -34,6 +34,7 @@ endif
 BUILD_DIR = $(BASE_BUILD_DIR)/$(BUILD_TYPE)
 OBJECT_DIR = $(BUILD_DIR)/obj
 BIN_DIR = .
+TAFFO_DIR = $(BASE_BUILD_DIR)/taffo
 
 #-----------------------------------------------------
 # Source files
@@ -69,7 +70,7 @@ CC_MARKER = $(BUILD_DIR)/$(CC).built
 #-----------------------------------------------------
 
 CFLAGS = -O3 -march=native -funroll-loops -Wno-attributes
-TAFFO_FLAGS = -Wno-unused-command-line-argument
+TAFFO_FLAGS = -Wno-unused-command-line-argument -temp-dir $(TAFFO_DIR)
 
 ifdef DEBUG
 	CFLAGS = -Og -g -fbounds-check
@@ -101,8 +102,9 @@ clover_leaf: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(OBJECTS)
 	@$(CC) $(CFLAGS) $(OBJECTS) -o $(BIN_DIR)/$@ $(LIBS)
 	@echo Done.
 
-clover_leaf_taffo: $(SOURCES) $(HEADERS) Makefile
+clover_leaf_taffo: $(TAFFO_DIR) $(SOURCES) $(HEADERS) Makefile
 	@echo Compiling all source files with TAFFO...
+	@taffo $(CFLAGS) $(TAFFO_FLAGS) $(SOURCES) -o $(BIN_DIR)/$@ $(LIBS)
 	@taffo $(CFLAGS) $(TAFFO_FLAGS) $(SOURCES) -o $(BIN_DIR)/clover_leaf_taffo $(LIBS)
 	@echo Done.
 
@@ -129,6 +131,9 @@ $(OBJECT_DIR):
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 
+$(TAFFO_DIR):
+	@mkdir -p $(TAFFO_DIR)	
+
 run: clover_leaf
 	@./clover_leaf
 
@@ -140,6 +145,6 @@ run-test: test
 
 clean:
 	@rm -rf $(BASE_BUILD_DIR)
-	@rm -f clover_leaf
-	@rm -f clover_leaf_taffo
-	@rm -f test
+	@rm -f clover_leaf*
+	@rm -f clover_leaf_taffo*
+	@rm -f test*
