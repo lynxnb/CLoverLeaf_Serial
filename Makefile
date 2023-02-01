@@ -43,8 +43,7 @@ TAFFO_DIR = $(BASE_BUILD_DIR)/taffo
 # Target-specific file exclusions
 CLOVER_EXCLUDE = $(SRC)/tests.c\
                  $(SRC)/tests.h
-TEST_EXCLUDE = $(SRC)/clover_leaf.c\
-               $(SRC)/report.c
+TEST_EXCLUDE = $(SRC)/report.c
 
 SOURCES = $(filter-out $(CLOVER_EXCLUDE), $(wildcard $(SRC)/*.c $(SRC)/*/*.c))
 HEADERS = $(filter-out $(CLOVER_EXCLUDE), $(wildcard $(SRC)/*.h $(SRC)/*/*.h))
@@ -105,7 +104,17 @@ clover_leaf: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(OBJECTS)
 clover_leaf_taffo: $(TAFFO_DIR) $(SOURCES) $(HEADERS) Makefile
 	@echo Compiling all source files with TAFFO...
 	@taffo $(CFLAGS) $(TAFFO_FLAGS) $(SOURCES) -o $(BIN_DIR)/$@ $(LIBS)
-	@taffo $(CFLAGS) $(TAFFO_FLAGS) $(SOURCES) -o $(BIN_DIR)/clover_leaf_taffo $(LIBS)
+	@echo Done.
+
+clover_leaf.a: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(OBJECTS)
+	@echo Creating static library $@...
+	@ar rcs $(BIN_DIR)/$@ $(OBJECTS)
+	@echo Done.
+
+clover_leaf_taffo.a: $(TAFFO_DIR) $(SOURCES) $(HEADERS) Makefile
+	@echo Creating static library $@...
+	@taffo $(CFLAGS) -c $(TAFFO_FLAGS) $(SOURCES) -o $(TAFFO_DIR)/clover_leaf_taffo.o $(LIBS)
+	@ar rcs $(BIN_DIR)/$@ $(TAFFO_DIR)/clover_leaf_taffo.o
 	@echo Done.
 
 test: $(BUILD_DIR) $(CC_MARKER) $(OBJECT_DIR) Makefile $(TEST_OBJECTS)
