@@ -10,7 +10,7 @@ extern void initialise();
 
 extern void hydro();
 
-int main(int argc, char **argv) {
+void clover_main() {
   clover_init_comms();
 
   printf("Clover Version %f\nMPI Version\nTask Count %d\n", G_VERSION, parallel.max_task);
